@@ -1,29 +1,32 @@
 # Awaken Drills
 
-Versão 3.0.0. Cronômetros de drills e sparring de Jiu-Jitsu em português e inglês. HTML, CSS e JavaScript puro, sem framework, backend ou dependência no navegador. O símbolo transparente da Awaken foi mantido.
+Versão 3.0.1 (correção de empacotamento). Cronômetros de drills e sparring de Jiu-Jitsu em português e inglês. HTML, CSS e JavaScript puro, sem framework, backend ou dependência no navegador. O símbolo transparente da Awaken foi mantido.
 
 ## Estrutura
 
 ```text
 awaken-drills/
-|-- index.html
-|-- css/
-|   `-- style.css
-|-- js/
-|   `-- main.js
-|-- assets/
-|   |-- images/
-|   |   `-- awaken-symbol.png
-|   `-- icons/
-|       `-- ui.svg
+|-- public/                 # ÚNICA pasta publicada no Worker
+|   |-- index.html
+|   |-- css/
+|   |   `-- style.css
+|   |-- js/
+|   |   `-- main.js
+|   |-- assets/
+|   |   |-- images/
+|   |   |   `-- awaken-symbol.png
+|   |   `-- icons/
+|   |       `-- ui.svg
+|   `-- _headers
 |-- package.json
 |-- wrangler.jsonc
 |-- .gitignore
-|-- _headers
 `-- README.md
 ```
 
-`index.html` contém as telas separadas; `css/style.css` define a interface mobile-first; `js/main.js` implementa os cronômetros, o sino, a proteção de tela, a tradução e as técnicas individuais. `_headers` configura cabeçalhos de segurança e revalidação de cache na Cloudflare Pages. Classes CSS, IDs e identificadores JavaScript usam camelCase; o texto visível usa capitalização natural, sem rótulos em caixa alta.
+O site é estático, sem backend. `wrangler.jsonc` aponta para `./public`, impedindo que a pasta `node_modules` e outros arquivos do projeto sejam tratados como assets. Esta organização corrige o erro anterior que tentava publicar o binário `node_modules/workerd/bin/workerd` (129 MiB) como asset de um Worker (limite de 25 MiB por arquivo).
+
+`public/index.html` contém as telas; `public/css/style.css` define a interface mobile-first; `public/js/main.js` implementa os cronômetros, o sino, a proteção de tela, a tradução e as técnicas individuais. `public/_headers` configura cabeçalhos de segurança e cache no Cloudflare Workers Static Assets. As referências usadas pelo HTML foram mantidas.
 
 ## Funcionamento
 
@@ -80,72 +83,69 @@ Os dados pertencem ao armazenamento local do navegador e ao mesmo endereço/orig
 
 ## Desenvolvimento local
 
-Para usar os comandos npm, utilize Node.js 22 ou superior, conforme o requisito do Wrangler fixado neste projeto.
+Requer Node.js 22 ou superior.
 
 ```bash
 npm install
+npm run check
 npm run dev
 ```
 
-Abra o endereço indicado pelo Wrangler no terminal. O aplicativo continua sendo estático: Node.js e Wrangler são ferramentas de desenvolvimento/publicação, não um backend.
-
-```bash
-npm run check
-```
-
-Esse comando verifica a sintaxe do JavaScript. O `package-lock.json` será gerado por `npm install`; inclua-o no Git para registrar também as dependências transitivas resolvidas. Não é necessário configurar variáveis de ambiente para o aplicativo.
-
-Wrangler **4.151.0** foi fixado com base na versão oficial consultada em 15/10/2026, em vez de usar a etiqueta variável `latest`.
-
-## Deploy
-
-### GitHub para Cloudflare Pages
-
-Coloque o conteúdo desta pasta na raiz do repositório, mantendo `index.html` nesse nível. Na Cloudflare, abra Workers & Pages, crie uma aplicação **Pages** e importe o repositório GitHub.
-
-Configure o preset como **None**, a branch de produção como `main`, o comando de build como `exit 0` e o diretório de saída como `.`. Não há compilação da aplicação. Mantenha o diretório raiz vazio se o projeto estiver na raiz do repositório.
-
-Para atualizar um projeto Pages já integrado, substitua os arquivos do repositório, incluindo `assets/icons/ui.svg` e `_headers`, e faça um commit na branch de produção. As configurações de build acima permanecem as mesmas.
-
-### Wrangler CLI
+Abra o endereço indicado pelo Wrangler. Para publicar manualmente na conta Cloudflare autenticada:
 
 ```bash
 npx wrangler login
 npm run deploy
 ```
 
-O comando publica no projeto Pages `awaken-drills` da conta autenticada. Para criar um projeto novo pelo CLI antes do primeiro deploy:
+O projeto utiliza Wrangler 4.151.0, fixado em `package.json`. O navegador recebe somente os arquivos estáticos em `public/`; Node.js e Wrangler são ferramentas de desenvolvimento e publicação.
 
-```bash
-npx wrangler pages project create awaken-drills
+## Deploy (Cloudflare Workers via GitHub)
+
+Este pacote foi preparado para o **Worker existente `awakendrills`**, com o comando de publicação `npx wrangler deploy` encontrado no log enviado. Não é necessário criar um projeto Pages diferente.
+
+1. **Extraia o ZIP** e coloque o conteúdo da pasta extraída na **raiz do repositório** GitHub, preservando a pasta `public/`.
+2. Substitua `package.json` e inclua `wrangler.jsonc` e `.gitignore`. Exclua da raiz quaisquer arquivos antigos `index.html`, `style.css`, `main.js`, `ui.svg`, `awaken-symbol.png`, `_headers` e pastas estáticas antigas não usadas, para evitar duplicação. **Os equivalentes corretos estão em `public/`.** Não exclua arquivos de outros projetos que compartilhem o repositório.
+3. Faça o commit na branch conectada à Cloudflare.
+4. Nas configurações de build/deploy do Worker, mantenha o comando **`npx wrangler deploy`**. Não configure a saída como `.` para sobrescrever o `wrangler.jsonc`; os assets estão em **`./public`**. O aplicativo não requer um comando de build.
+5. Verifique o novo log: a lista de assets deve conter somente os arquivos do site, sem `node_modules`.
+
+**Importante:** o GitHub não descompacta automaticamente um ZIP enviado como arquivo. É necessário extrair o pacote antes de enviar os arquivos para o repositório. As configurações permanecem associadas ao Worker que já está ligado ao repositório.
+
+Configuração relevante de `wrangler.jsonc`:
+
+```json
+{
+  "name": "awakendrills",
+  "compatibility_date": "2026-10-12",
+  "assets": { "directory": "./public" }
+}
 ```
 
-O arquivo `wrangler.jsonc` é de **Pages**, não de um Worker com backend. Não use `wrangler deploy` no lugar de `wrangler pages deploy`.
+O arquivo real inclui também o schema e a observabilidade. Para aplicações servidas por Workers Static Assets, `public/_headers` é a localização correta para cabeçalhos personalizados.
 
 ## Acesso protegido e segurança
 
-Não há senha no frontend. Para restringir o uso, configure Cloudflare Zero Trust / Access com uma aplicação self-hosted e política de acesso para o domínio escolhido e os e-mails autorizados. A documentação oficial abaixo explica os detalhes de proteção dos endereços de Pages.
+Não há senha no frontend. Para restringir o uso, configure Cloudflare Zero Trust / Access com uma aplicação self-hosted e política de acesso para o domínio escolhido e os e-mails autorizados. Confira nas configurações do Access quais endereços (domínio próprio e subdomínio do Worker) ficam protegidos.
 
-Proteger somente o domínio personalizado não protege automaticamente o `pages.dev`. A opção de proteção de previews, isoladamente, também não protege a URL de produção. Verifique produção, previews e domínio personalizado em uma janela não autenticada antes de considerar o acesso restrito.
+Proteger somente o domínio personalizado não garante proteção automática de um endereço `workers.dev` associado ao Worker. Verifique produção, previews e domínio personalizado em uma janela não autenticada antes de considerar o acesso restrito.
 
-O frontend não envia técnicas a servidores, não carrega scripts externos e trata nomes como texto, nunca como HTML. `_headers` restringe recursos à mesma origem e desabilita enquadramento por outras páginas. A aplicação não necessita de câmera, microfone ou geolocalização.
+O frontend não envia técnicas a servidores, não carrega scripts externos e trata nomes como texto, nunca como HTML. `public/_headers` restringe recursos à mesma origem e desabilita enquadramento por outras páginas. A aplicação não necessita de câmera, microfone ou geolocalização.
 
-A pasta de publicação é pública. Não coloque nela segredos, documentos privados, arquivos `.env` ou `.dev.vars`: `.gitignore` não é um controle de acesso nem uma garantia de exclusão no upload direto. Use a autenticação do Wrangler ou as configurações da Cloudflare, nunca credenciais em arquivos servidos pelo site.
+A pasta `public/` é pública. Não coloque nela segredos, documentos privados, arquivos `.env` ou `.dev.vars`: `.gitignore` não é um controle de acesso nem uma garantia de exclusão no upload direto. Use a autenticação do Wrangler ou as configurações da Cloudflare, nunca credenciais em arquivos servidos pelo site.
 
-## Verificação desta entrega
+## Verificação do pacote corrigido
 
-Foram executados 20 grupos de testes de interface e comportamento em Chromium, com os arquivos carregados localmente em um ambiente de teste sem rede. Cobriram listas vazias/individuais, alternância, preparação, sparring, pausa, retomada, navegação, tradução, migração de dados, acessibilidade básica e layouts de 320 px a desktop, inclusive paisagem.
+A alteração realizada neste pacote é de **estrutura e configuração de deploy**: os códigos HTML, CSS, JavaScript, SVG e a imagem foram preservados. Foram conferidas a sintaxe de `public/js/main.js`, as referências dos arquivos do site, os ícones SVG usados pelo HTML, e a pasta indicada em `wrangler.jsonc`. Nenhum arquivo do `node_modules` está incluído no ZIP nem dentro de `public/`.
 
-O ciclo de permissão, revogação e retorno do Wake Lock foi testado com a API simulada. O sino foi adicionalmente exercitado com a Web Audio API nativa, com sinal de áudio não nulo, e a tela cheia com a API nativa do Chromium. Não foram observadas exceções de JavaScript nesses testes. Casos adicionais incluíram nomes longos e armazenamento corrompido ou indisponível.
-
-Isso não substitui testar o som e o bloqueio de tela no celular usado no treino. Não foi realizada publicação na conta Cloudflare nem instalação pelo registro npm, que estava inacessível neste ambiente. O projeto não contém dados de teste nem dependências dos testes.
+Esta validação local não equivale a um deploy real na conta Cloudflare, nem substitui testes de áudio, Wake Lock e tela cheia no dispositivo utilizado no treino.
 
 ## Referências
 
 - [Screen Wake Lock API](https://developer.mozilla.org/en-US/docs/Web/API/Screen_Wake_Lock_API)
 - [Web Audio API: boas práticas e ativação por gesto](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Best_practices)
 - [Fullscreen API](https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API/Guide)
-- [Cloudflare Pages: HTML estático](https://developers.cloudflare.com/pages/framework-guides/deploy-anything/)
-- [Cloudflare Pages: cabeçalhos](https://developers.cloudflare.com/pages/configuration/headers/)
-- [Cloudflare Pages: Access e limitações conhecidas](https://developers.cloudflare.com/pages/platform/known-issues/)
+- [Cloudflare Workers: Static Assets](https://developers.cloudflare.com/workers/static-assets/)
+- [Cloudflare Workers: cabeçalhos de assets](https://developers.cloudflare.com/workers/static-assets/headers/)
+- [Cloudflare Workers: configurações de assets](https://developers.cloudflare.com/workers/static-assets/binding/)
 - [Wrangler 4.151.0](https://github.com/cloudflare/workers-sdk/releases/tag/wrangler%404.151.0)

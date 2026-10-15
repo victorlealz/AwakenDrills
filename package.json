@@ -1,11 +1,11 @@
 {
   "name": "awaken-drills",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": true,
   "scripts": {
-    "check": "node --check js/main.js",
-    "dev": "wrangler pages dev .",
-    "deploy": "wrangler pages deploy . --project-name=awaken-drills"
+    "check": "node --check public/js/main.js",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
   },
   "engines": {
     "node": ">=22.0.0"

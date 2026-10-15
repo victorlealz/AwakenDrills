@@ -1,0 +1,269 @@
+:root {
+  color-scheme: dark;
+  --background: #080f1d;
+  --surface: #111d30;
+  --inset: #0c1627;
+  --border: #32425a;
+  --text: #f5f8fc;
+  --muted: #b1bfd1;
+  --aqua: #14dcd1;
+  --blue: #104d98;
+  --green: #12633f;
+  --headerHeight: 72px;
+  --pageSpace: 16px;
+  --radius: 20px;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { min-width: 280px; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--text);
+  font: 400 1rem/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+button, input, select { font: inherit; }
+button, select { touch-action: manipulation; }
+button { cursor: pointer; }
+button:disabled { opacity: .4; cursor: not-allowed; }
+button, input, select { min-height: 48px; }
+button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible {
+  outline: 3px solid var(--aqua);
+  outline-offset: 4px;
+}
+h1:focus, main:focus { outline: none; }
+button { transition: background-color .15s, border-color .15s; }
+svg { flex-shrink: 0; }
+.icon { display: block; width: 22px; height: 22px; }
+.smallIcon { width: 18px; height: 18px; }
+.visuallyHidden, .skipLink:not(:focus) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.skipLink:focus { position: fixed; z-index: 200; padding: 12px; background: var(--surface); color: var(--text); }
+
+/* Brand and the only navigation between configuration screens. */
+.appHeader {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: var(--headerHeight);
+  padding: 8px max(var(--pageSpace), calc((100vw - 960px) / 2));
+  padding-left: max(var(--pageSpace), calc((100vw - 960px) / 2), env(safe-area-inset-left));
+  padding-right: max(var(--pageSpace), calc((100vw - 960px) / 2), env(safe-area-inset-right));
+  padding-top: max(8px, env(safe-area-inset-top));
+  border-bottom: 1px solid #1d2b40;
+  background: #0b1423;
+}
+.brand { display: flex; align-items: center; gap: 9px; white-space: nowrap; font-size: clamp(.9rem, 4vw, 1.1rem); font-weight: 700; letter-spacing: -.025em; }
+.brand b { color: var(--aqua); font-weight: inherit; }
+.brand img { width: 42px; height: 42px; object-fit: contain; }
+.headerActions { display: flex; align-items: center; gap: 8px; }
+#language { width: 68px; padding: 8px; }
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  min-width: 48px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+}
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: max(var(--pageSpace), calc((100vw - 960px) / 2));
+  width: min(232px, calc(100vw - 32px));
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: #152238;
+  box-shadow: 0 16px 40px #0008;
+}
+.dropdownMenu button { display: block; width: 100%; border: 0; border-radius: 10px; padding: 12px; text-align: left; background: transparent; color: var(--text); }
+.dropdownMenu button[aria-current="page"] { color: var(--aqua); background: #1e344a; }
+
+/* Single-column first; larger screens progressively gain columns. */
+main { max-width: 960px; margin: 0 auto; padding: 24px var(--pageSpace) max(24px, env(safe-area-inset-bottom)); }
+.page > h1 { margin: 0 0 18px; font-size: clamp(1.55rem, 4vw, 2rem); font-weight: 700; line-height: 1.2; letter-spacing: -.035em; }
+.panel { display: grid; gap: 22px; padding: 18px; border: 1px solid #29394e; border-radius: var(--radius); background: var(--surface); }
+.setupGrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px 16px; }
+.fullRow { grid-column: 1 / -1; }
+.field { display: grid; align-content: start; gap: 8px; min-width: 0; }
+.field > label, .timeField legend { color: #e0e9f3; font-weight: 600; font-size: .95rem; }
+input:not([type="checkbox"]), select { width: 100%; min-width: 0; border: 1px solid #435570; border-radius: 10px; padding: 10px 12px; background: var(--inset); color: var(--text); }
+input::placeholder { color: var(--muted); opacity: 1; }
+.timeField { min-width: 0; margin: 0; padding: 0; border: 0; }
+.timeField legend { padding: 0; margin-bottom: 9px; }
+.timePicker { display: grid; grid-template-columns: minmax(0, 1fr) 12px minmax(0, 1fr); align-items: end; gap: 10px; }
+.timePicker label { display: grid; gap: 5px; min-width: 0; }
+.timePicker label > span { color: var(--muted); font-size: .8rem; }
+.timePicker select { font-variant-numeric: tabular-nums; }
+.timeSeparator { align-self: end; display: grid; place-items: center; height: 48px; font-size: 1.2rem; color: var(--muted); }
+.switchField { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; font-size: .95rem; font-weight: 600; cursor: pointer; }
+.switchField > input { position: absolute; right: 0; width: 52px; height: 48px; margin: 0; opacity: 0; cursor: pointer; }
+.switchTrack { width: 48px; height: 28px; border-radius: 20px; background: #435570; flex-shrink: 0; pointer-events: none; }
+.switchTrack::after { content: ""; display: block; width: 20px; height: 20px; margin: 4px; border-radius: 50%; background: white; transition: transform .15s; }
+.switchField > input:checked + .switchTrack { background: var(--aqua); }
+.switchField > input:checked + .switchTrack::after { background: #062a35; transform: translateX(20px); }
+.switchField > input:focus-visible + .switchTrack { outline: 3px solid var(--aqua); outline-offset: 5px; }
+.athleteGrid { display: grid; gap: 14px; }
+.athleteCard { display: grid; align-content: start; gap: 12px; min-width: 0; padding: 16px; border: 1px solid var(--border); border-radius: 15px; background: #0e192b; }
+.colorChoices { display: flex; align-items: center; gap: 6px; }
+.colorDot { display: grid; place-items: center; width: 48px; padding: 0; border: 0; border-radius: 50%; background: transparent; }
+.colorDot::before { content: ""; width: 28px; height: 28px; border-radius: 50%; background: #1aaf70; }
+.colorDot[data-color="blue"]::before { background: #2078e5; }
+.colorDot[aria-pressed="true"]::before { outline: 2px solid white; outline-offset: 4px; }
+.techChoices { display: grid; gap: 5px; }
+.techChoices:empty { display: none; }
+.techOption { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 4px 0; cursor: pointer; overflow-wrap: anywhere; font-size: .95rem; }
+.techOption input { width: 20px; height: 20px; min-height: 0; margin: 0; flex-shrink: 0; accent-color: var(--aqua); }
+.primaryButton { display: inline-flex; justify-content: center; align-items: center; min-height: 50px; padding: 12px 22px; border: 0; border-radius: 12px; background: var(--aqua); color: #06232b; font-weight: 700; }
+.addForm { display: grid; gap: 12px; }
+.libraryList { display: grid; gap: 20px; }
+.libraryGroup { min-width: 0; }
+.libraryGroup h2 { margin: 0 0 8px; font-size: 1rem; font-weight: 600; }
+.libraryRow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+.libraryRow > span { min-width: 0; overflow-wrap: anywhere; }
+.message { padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; color: var(--aqua); }
+
+/* Timer: tabular digits, large touch controls, safe-area insets. */
+body[data-page="timer"] main {
+  padding: var(--pageSpace);
+  padding-left: max(var(--pageSpace), env(safe-area-inset-left));
+  padding-right: max(var(--pageSpace), env(safe-area-inset-right));
+  max-width: 1120px;
+}
+.timerPage { height: calc(100svh - var(--headerHeight) - 2 * var(--pageSpace) - env(safe-area-inset-top)); min-height: 420px; }
+.timerPanel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  height: 100%;
+  min-width: 0;
+  overflow-y: auto;
+  padding: 16px;
+  border: 1px solid #ffffff24;
+  border-radius: var(--radius);
+  background: var(--blue);
+  color: #fff;
+  transition: background-color .2s;
+}
+.timerPanel[data-tone="green"] { background: var(--green); }
+.timerPanel[data-tone="prepare"] { background: #534017; }
+.timerPanel[data-tone="rest"] { background: #24394f; }
+.timerTop { display: flex; align-items: center; gap: 8px; min-height: 48px; }
+.timerTop h1 { flex: 1; margin: 0; font-size: clamp(1rem, 3vw, 1.2rem); line-height: 1.2; font-weight: 600; letter-spacing: 0; overflow-wrap: anywhere; }
+.timerTools { display: flex; gap: 6px; }
+.timerPanel .iconButton { border-color: #ffffff45; background: #06152617; }
+.timerTop, .timerCenter, .timerBottom { flex-shrink: 0; }
+.timerCenter { text-align: center; min-width: 0; }
+.timerDetails { display: grid; gap: 4px; }
+#timerAthlete { font-size: clamp(1rem, 3.5vw, 1.45rem); font-weight: 500; overflow-wrap: anywhere; }
+#timerTechnique { font-size: clamp(1.05rem, 4vw, 1.65rem); line-height: 1.3; font-weight: 600; overflow-wrap: anywhere; }
+#clock { margin: 6px 0 0; font-size: clamp(3.5rem, 20vw, 9rem); font-weight: 750; font-variant-numeric: tabular-nums; letter-spacing: -.055em; line-height: 1.12; white-space: nowrap; }
+#progress { margin-top: 10px; font-variant-numeric: tabular-nums; font-size: .9rem; opacity: .88; }
+.timerBottom { display: grid; gap: 14px; }
+#progressBar { display: block; appearance: none; width: 100%; height: 5px; border: 0; border-radius: 10px; overflow: hidden; background: #ffffff40; color: white; }
+#progressBar::-webkit-progress-bar { border-radius: 10px; background: #ffffff40; }
+#progressBar::-webkit-progress-value { background: white; border-radius: 10px; }
+#progressBar::-moz-progress-bar { background: white; border-radius: 10px; }
+.timerControls { display: grid; grid-template-columns: 48px minmax(0, 1fr) 48px; gap: 10px; width: min(100%, 420px); margin: 0 auto; }
+.playButton { min-height: 52px; padding: 10px 8px; border: 1px solid white; border-radius: 12px; background: white; color: #102339; font-weight: 700; }
+.timerUtility { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 8px; }
+.textButton { display: inline-flex; justify-content: center; align-items: center; gap: 7px; min-height: 44px; padding: 6px 2px; border: 0; background: transparent; color: inherit; font-size: .82rem; border-radius: 7px; }
+.statusDot { width: 6px; height: 6px; border-radius: 50%; background: #ffffff70; flex-shrink: 0; }
+.wakeStatus[data-state="active"] .statusDot { background: #86ffca; box-shadow: 0 0 0 3px #86ffca1a; }
+.wakeStatus[data-state="unavailable"] .statusDot { background: #ffd595; }
+.timerNotice { margin: 0; font-size: .8rem; line-height: 1.4; color: #fff2d9; text-align: center; }
+.timerPanel :focus-visible { outline-color: white; }
+.timerPanel.isExpanded, .timerPanel:fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  padding: max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+}
+body.hasExpandedTimer { overflow: hidden; }
+
+@media (hover: hover) {
+  .primaryButton:hover { background: #60e9e0; }
+  .iconButton:not(:disabled):hover { background: #ffffff12; border-color: #b5c7dd; }
+  .dropdownMenu button:not(:disabled):hover { background: #263d56; }
+  .textButton:hover { background: #ffffff10; }
+  .playButton:hover { background: #e9f6ff; }
+}
+@media (min-width: 650px) {
+  :root { --pageSpace: 24px; }
+  main { padding-top: 32px; }
+  .panel { padding: 26px; }
+  .athleteGrid:not(.singleAthlete) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .addForm { grid-template-columns: 170px minmax(0, 1fr) auto; }
+  .libraryList { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px; }
+  .timerPanel { padding: 26px; }
+  .timePicker { max-width: 430px; }
+  #sparringPage .timeField { grid-column: auto; }
+  .timerPanel.isExpanded, .timerPanel:fullscreen { padding: max(28px, env(safe-area-inset-top)) max(32px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom)) max(32px, env(safe-area-inset-left)); }
+  .timerPanel.isExpanded #clock, .timerPanel:fullscreen #clock { font-size: clamp(5rem, min(26vw, 34dvh), 20rem); }
+}
+@media (max-width: 340px) {
+  :root { --pageSpace: 12px; }
+  .brand img { width: 34px; height: 34px; }
+  .brand { gap: 5px; }
+  .headerActions { gap: 5px; }
+  #language { width: 60px; }
+  .timerPanel { padding: 12px; }
+  .timerTop { gap: 6px; }
+  .timerTop .iconButton { width: 44px; min-width: 44px; min-height: 44px; }
+  .panel { padding: 14px; }
+}
+@media (orientation: landscape) and (max-height: 540px) {
+  :root { --headerHeight: 60px; --pageSpace: 10px; }
+  .appHeader { padding-top: 5px; padding-bottom: 5px; }
+  body[data-page="timer"] main { max-width: none; }
+  .timerPage { min-height: 0; }
+  .timerPanel { gap: 4px; padding: 8px 14px; }
+  .timerTop, .timerTop .iconButton { min-height: 44px; }
+  .timerTop .iconButton { width: 44px; min-width: 44px; }
+  .timerDetails { display: flex; align-items: baseline; justify-content: center; gap: 12px; }
+  #timerAthlete, #timerTechnique { font-size: .95rem; }
+  #clock { font-size: clamp(2.9rem, 19dvh, 5rem); margin: 0; line-height: 1; }
+  #progress { margin-top: 1px; font-size: .75rem; }
+  .timerBottom { grid-template-columns: minmax(0, 1fr) auto; gap: 5px 16px; }
+  #progressBar { grid-column: 1 / -1; height: 4px; }
+  .timerUtility { gap: 12px; flex-wrap: nowrap; }
+  .timerControls { max-width: 340px; gap: 8px; }
+  .timerControls .iconButton, .playButton { min-height: 44px; }
+  .timerNotice { grid-column: 1 / -1; }
+  .timerPanel.isExpanded, .timerPanel:fullscreen { padding: max(10px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
+  .timerPanel.isExpanded #clock, .timerPanel:fullscreen #clock { font-size: clamp(3.5rem, 28dvh, 8rem); }
+}
+@media (orientation: landscape) and (max-height: 360px) {
+  #clock { font-size: clamp(2.5rem, 16dvh, 3.5rem); }
+  #timerAthlete, #timerTechnique { font-size: .85rem; line-height: 1.25; }
+  .timerDetails { gap: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
+}
