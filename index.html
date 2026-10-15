@@ -2,36 +2,187 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#07121d">
-  <meta name="description" content="Awaken Drills: cronômetros de drills e sparring de Jiu-Jitsu, técnicas e alternância de atletas.">
-  <title>Awaken Drills | Jiu-Jitsu Training</title>
-  <link rel="icon" href="./assets/images/awaken-logo.png" type="image/png">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080f1d">
+  <meta name="description" content="Awaken Drills: cron&#244;metros de drills e sparring de Jiu-Jitsu.">
+  <title>Awaken Drills</title>
+  <link rel="icon" type="image/png" href="./assets/images/awaken-symbol.png">
   <link rel="stylesheet" href="./css/style.css">
   <script src="./js/main.js" defer></script>
 </head>
-<body>
-  <header class="site-header container">
-    <div class="brand"><img src="./assets/images/awaken-logo.png" alt="Awaken Bright Side of Jiu Jitsu" width="66" height="88"><div><strong>AWAKEN <span>DRILLS</span></strong><small data-i18n="subtitle">Treine com propósito.</small></div></div>
-    <div class="header-actions"><label class="sr-only" for="language">Idioma / Language</label><select id="language"><option value="pt">Português</option><option value="en">English</option></select><button id="wake" class="secondary" type="button" aria-pressed="false" data-i18n="keepAwake">Manter tela ativa</button></div>
+<body data-page="drill">
+  <a class="skipLink" href="#mainContent" data-i18n="skipContent">Ir para o conte&#250;do</a>
+  <header class="appHeader">
+    <div class="brand">
+      <img src="./assets/images/awaken-symbol.png" alt="Awaken" width="46" height="46">
+      <span>Awaken <b>Drills</b></span>
+    </div>
+    <div class="headerActions">
+      <select id="language" aria-label="Idioma" data-i18n-aria="language">
+        <option value="pt">PT</option>
+        <option value="en">EN</option>
+      </select>
+      <button id="menuButton" class="iconButton" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu">
+        <svg class="icon" aria-hidden="true"><use href="./assets/icons/ui.svg#menu"></use></svg>
+      </button>
+    </div>
+    <nav id="menu" class="dropdownMenu" aria-label="Navega&#231;&#227;o" data-i18n-aria="navigation" hidden>
+      <button type="button" data-page="drill" data-i18n="drills" aria-current="page">Drills</button>
+      <button type="button" data-page="sparring" data-i18n="sparring">Sparring</button>
+      <button type="button" data-page="library" data-i18n="techniques">T&#233;cnicas</button>
+      <button type="button" data-page="timer" data-i18n="timer" id="timerMenu" disabled>Cron&#244;metro</button>
+    </nav>
   </header>
-  <main class="container">
-    <nav class="tabs" aria-label="Training modes"><button class="tab active" type="button" data-mode="drill" aria-current="page" data-i18n="drill">Drills</button><button class="tab" type="button" data-mode="sparring" data-i18n="sparring">Sparring</button></nav>
-    <section class="timer-panel" id="timerPanel" aria-label="Cronômetro">
-      <div class="timer-top"><span id="phase" class="phase">DRILL</span><span id="progress">1 / 1</span></div>
-      <div id="athlete" class="athlete">ATLETA AZUL</div>
-      <div id="clock" class="clock" role="timer" aria-live="off">01:00</div>
-      <div id="currentTechnique" class="current-technique">—</div>
-      <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
-      <div class="timer-controls"><button id="previous" class="secondary" type="button" data-i18n="previous">Anterior</button><button id="start" class="primary" type="button" data-i18n="start">Iniciar</button><button id="next" class="secondary" type="button" data-i18n="next">Próximo</button><button id="reset" class="ghost" type="button" data-i18n="reset">Reiniciar</button></div>
+
+  <main id="mainContent" tabindex="-1">
+    <section id="drillPage" class="page" aria-labelledby="drillTitle">
+      <h1 id="drillTitle" tabindex="-1" data-i18n="drills">Drills</h1>
+      <div class="panel">
+        <div class="setupGrid">
+          <div class="field">
+            <label for="participants" data-i18n="athletes">Atletas</label>
+            <select id="participants"><option value="1">1</option><option value="2" selected>2</option></select>
+          </div>
+          <div class="field">
+            <label for="drillPrepSec" data-i18n="prepare">Preparar</label>
+            <select id="drillPrepSec" data-i18n-aria="prepareSeconds" aria-label="Preparar, segundos"></select>
+          </div>
+          <fieldset class="timeField fullRow">
+            <legend data-i18n="duration">Tempo</legend>
+            <div class="timePicker">
+              <label><span data-i18n="minutesShort">Min</span><select id="drillMin" data-i18n-aria="drillMinutes" aria-label="Drill, minutos"></select></label>
+              <span class="timeSeparator" aria-hidden="true">:</span>
+              <label><span data-i18n="secondsShort">Seg</span><select id="drillSec" data-i18n-aria="drillSeconds" aria-label="Drill, segundos"></select></label>
+            </div>
+          </fieldset>
+        </div>
+        <label class="switchField" id="alternateField">
+          <span data-i18n="alternateAthletes">Alternar Atletas</span>
+          <input id="alternateTiming" type="checkbox" role="switch" checked>
+          <span class="switchTrack" aria-hidden="true"></span>
+        </label>
+        <div id="athleteSettings" class="athleteGrid">
+          <div class="athleteCard">
+            <div class="field">
+              <label for="athlete1" data-i18n="athlete1">Atleta 1</label>
+              <input id="athlete1" maxlength="32" autocomplete="off" placeholder="Atleta 1">
+            </div>
+            <div class="colorChoices" data-athlete="1" role="group" data-i18n-aria="athlete1Color" aria-label="Cor do atleta 1">
+              <button type="button" class="colorDot" data-color="green" data-i18n-aria="green" aria-label="Verde" aria-pressed="true"></button>
+              <button type="button" class="colorDot" data-color="blue" data-i18n-aria="blue" aria-label="Azul" aria-pressed="false"></button>
+            </div>
+            <div id="tech1" class="techChoices" role="group" data-i18n-aria="athlete1Techniques" aria-label="T&#233;cnicas do atleta 1"></div>
+          </div>
+          <div class="athleteCard" id="athleteTwo">
+            <div class="field">
+              <label for="athlete2" data-i18n="athlete2">Atleta 2</label>
+              <input id="athlete2" maxlength="32" autocomplete="off" placeholder="Atleta 2">
+            </div>
+            <div class="colorChoices" data-athlete="2" role="group" data-i18n-aria="athlete2Color" aria-label="Cor do atleta 2">
+              <button type="button" class="colorDot" data-color="green" data-i18n-aria="green" aria-label="Verde" aria-pressed="false"></button>
+              <button type="button" class="colorDot" data-color="blue" data-i18n-aria="blue" aria-label="Azul" aria-pressed="true"></button>
+            </div>
+            <div id="tech2" class="techChoices" role="group" data-i18n-aria="athlete2Techniques" aria-label="T&#233;cnicas do atleta 2"></div>
+          </div>
+        </div>
+        <button class="primaryButton" id="launchDrill" type="button" data-i18n="start">Iniciar</button>
+      </div>
     </section>
-    <section id="drillSettings" class="settings-grid">
-      <div class="card"><h2 data-i18n="drillSettings">Configurar drill</h2><div class="fields"><label><span data-i18n="duration">Segundos por etapa</span><input id="drillSeconds" type="number" min="5" max="3600" value="60"></label><label><span data-i18n="participants">Participantes</span><select id="participants"><option value="1" data-i18n="one">1 pessoa</option><option value="2" data-i18n="two">2 pessoas</option></select></label><label><span data-i18n="sets">Séries por técnica</span><input id="sets" type="number" min="1" max="50" value="1"></label><label><span data-i18n="firstAthlete">Primeiro atleta</span><select id="firstAthlete"><option value="blue" data-i18n="blue">Azul</option><option value="green" data-i18n="green">Verde</option></select></label></div><p class="hint" data-i18n="drillHint">Com 2 pessoas, cada atleta executa cada técnica em cada série.</p></div>
-      <div class="card"><h2 data-i18n="techniques">Biblioteca de técnicas</h2><form id="addTechnique" class="add-technique"><label class="sr-only" for="techniqueName" data-i18n="techniqueName">Nome da técnica</label><input id="techniqueName" type="text" maxlength="90" required placeholder="Ex.: Passagem de guarda"><button class="primary" type="submit" data-i18n="add">Adicionar</button></form><div id="techniqueList" class="technique-list"></div><div class="list-actions"><button id="selectAll" class="secondary" type="button" data-i18n="selectAll">Selecionar todas</button><button id="clearSelection" class="secondary" type="button" data-i18n="clear">Limpar seleção</button></div><p class="hint" data-i18n="techHint">Marque as técnicas que entrarão na sessão. Arraste não é necessário: a ordem da lista define a sequência.</p></div>
+
+    <section id="sparringPage" class="page" aria-labelledby="sparringTitle" hidden>
+      <h1 id="sparringTitle" tabindex="-1" data-i18n="sparring">Sparring</h1>
+      <div class="panel">
+        <div class="setupGrid">
+          <div class="field">
+            <label for="prepSec" data-i18n="prepare">Preparar</label>
+            <select id="prepSec" data-i18n-aria="prepareSeconds" aria-label="Preparar, segundos"></select>
+          </div>
+          <div class="field">
+            <label for="rounds" data-i18n="rounds">Rounds</label>
+            <select id="rounds"></select>
+          </div>
+          <fieldset class="timeField fullRow">
+            <legend data-i18n="sparring">Sparring</legend>
+            <div class="timePicker">
+              <label><span data-i18n="minutesShort">Min</span><select id="fightMin" data-i18n-aria="fightMinutes" aria-label="Sparring, minutos"></select></label>
+              <span class="timeSeparator" aria-hidden="true">:</span>
+              <label><span data-i18n="secondsShort">Seg</span><select id="fightSec" data-i18n-aria="fightSeconds" aria-label="Sparring, segundos"></select></label>
+            </div>
+          </fieldset>
+          <fieldset class="timeField fullRow">
+            <legend data-i18n="rest">Descanso</legend>
+            <div class="timePicker">
+              <label><span data-i18n="minutesShort">Min</span><select id="restMin" data-i18n-aria="restMinutes" aria-label="Descanso, minutos"></select></label>
+              <span class="timeSeparator" aria-hidden="true">:</span>
+              <label><span data-i18n="secondsShort">Seg</span><select id="restSec" data-i18n-aria="restSeconds" aria-label="Descanso, segundos"></select></label>
+            </div>
+          </fieldset>
+        </div>
+        <button class="primaryButton" id="launchSparring" type="button" data-i18n="start">Iniciar</button>
+      </div>
     </section>
-    <section id="sparringSettings" class="card hidden"><h2 data-i18n="sparringSettings">Configurar sparring</h2><div class="fields"><label><span data-i18n="prep">Preparação (segundos)</span><input id="prepSeconds" type="number" min="0" max="3600" value="10"></label><label><span data-i18n="fight">Sparring (segundos)</span><input id="fightSeconds" type="number" min="5" max="7200" value="300"></label><label><span data-i18n="rest">Descanso (segundos)</span><input id="restSeconds" type="number" min="0" max="3600" value="60"></label><label><span data-i18n="rounds">Rounds</span><input id="rounds" type="number" min="1" max="99" value="5"></label></div><p class="hint" data-i18n="sparringHint">Sequência: preparar → sparring → descanso. O último round termina sem descanso.</p></section>
-    <p id="message" class="message" role="status" aria-live="polite"></p>
+
+    <section id="libraryPage" class="page" aria-labelledby="libraryTitle" hidden>
+      <h1 id="libraryTitle" tabindex="-1" data-i18n="techniques">T&#233;cnicas</h1>
+      <div class="panel">
+        <form id="addTechnique" class="addForm">
+          <select id="owner" data-i18n-aria="athlete" aria-label="Atleta"><option value="1">Atleta 1</option><option value="2">Atleta 2</option></select>
+          <input id="techniqueName" maxlength="90" required autocomplete="off" data-i18n-aria="technique" aria-label="T&#233;cnica" placeholder="T&#233;cnica">
+          <button class="primaryButton" type="submit" data-i18n="add">Adicionar</button>
+        </form>
+        <div id="libraryList" class="libraryList"></div>
+      </div>
+    </section>
+
+    <section id="timerPage" class="page timerPage" aria-labelledby="phase" hidden>
+      <div id="timerPanel" class="timerPanel" data-tone="blue">
+        <div class="timerTop">
+          <button id="back" type="button" class="iconButton" data-i18n-aria="back" aria-label="Voltar">
+            <svg class="icon" aria-hidden="true"><use href="./assets/icons/ui.svg#back"></use></svg>
+          </button>
+          <h1 id="phase" tabindex="-1">Drill</h1>
+          <div class="timerTools">
+            <button id="sound" class="iconButton" type="button" data-i18n-aria="bell" aria-label="Sino" aria-pressed="true">
+              <svg class="icon" aria-hidden="true"><use id="soundIcon" href="./assets/icons/ui.svg#bell"></use></svg>
+            </button>
+            <button id="fullscreen" class="iconButton" type="button" aria-label="Tela Cheia" aria-pressed="false">
+              <svg class="icon" aria-hidden="true"><use id="fullscreenIcon" href="./assets/icons/ui.svg#expand"></use></svg>
+            </button>
+          </div>
+        </div>
+        <div class="timerCenter">
+          <div class="timerDetails"><div id="timerAthlete"></div><div id="timerTechnique"></div></div>
+          <div id="clock" role="timer" aria-live="off">00:00</div>
+          <div id="progress">0 / 0</div>
+        </div>
+        <div class="timerBottom">
+          <progress id="progressBar" value="0" max="1" data-i18n-aria="elapsed" aria-label="Tempo decorrido"></progress>
+          <div class="timerControls">
+            <button id="previous" type="button" class="iconButton" data-i18n-aria="previous" aria-label="Anterior">
+              <svg class="icon" aria-hidden="true"><use href="./assets/icons/ui.svg#previous"></use></svg>
+            </button>
+            <button id="play" class="playButton" type="button" data-i18n="start">Iniciar</button>
+            <button id="next" type="button" class="iconButton" data-i18n-aria="next" aria-label="Pr&#243;ximo">
+              <svg class="icon" aria-hidden="true"><use href="./assets/icons/ui.svg#next"></use></svg>
+            </button>
+          </div>
+          <div class="timerUtility">
+            <button id="reset" class="textButton" type="button">
+              <svg class="smallIcon" aria-hidden="true"><use href="./assets/icons/ui.svg#reset"></use></svg>
+              <span data-i18n="reset">Reiniciar</span>
+            </button>
+            <button id="wake" type="button" class="textButton wakeStatus" aria-label="Tela ativa autom&#225;tica" data-state="idle">
+              <svg class="smallIcon" aria-hidden="true"><use href="./assets/icons/ui.svg#screen"></use></svg>
+              <span id="wakeText">Tela Ativa</span><span class="statusDot" aria-hidden="true"></span>
+            </button>
+          </div>
+          <p id="timerNotice" class="timerNotice" role="status" hidden></p>
+        </div>
+        <p id="timerAnnouncement" class="visuallyHidden" role="status" aria-live="polite" aria-atomic="true"></p>
+      </div>
+    </section>
+    <p id="message" class="message" role="status" aria-live="polite" hidden></p>
+    <noscript>Ative o JavaScript para usar o Awaken Drills. Enable JavaScript to use Awaken Drills.</noscript>
   </main>
-  <footer class="container footer">AWAKEN · BRIGHT SIDE OF JIU JITSU</footer>
 </body>
 </html>
