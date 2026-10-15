@@ -1,0 +1,12 @@
+{
+  "name": "awaken-drills",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler pages dev .",
+    "deploy": "wrangler pages deploy . --project-name=awaken-drills"
+  },
+  "devDependencies": {
+    "wrangler": "latest"
+  }
+}

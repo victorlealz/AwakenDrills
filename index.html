@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07121d">
+  <meta name="description" content="Awaken Drills: cronômetros de drills e sparring de Jiu-Jitsu, técnicas e alternância de atletas.">
+  <title>Awaken Drills | Jiu-Jitsu Training</title>
+  <link rel="icon" href="./assets/images/awaken-logo.png" type="image/png">
+  <link rel="stylesheet" href="./css/style.css">
+  <script src="./js/main.js" defer></script>
+</head>
+<body>
+  <header class="site-header container">
+    <div class="brand"><img src="./assets/images/awaken-logo.png" alt="Awaken Bright Side of Jiu Jitsu" width="66" height="88"><div><strong>AWAKEN <span>DRILLS</span></strong><small data-i18n="subtitle">Treine com propósito.</small></div></div>
+    <div class="header-actions"><label class="sr-only" for="language">Idioma / Language</label><select id="language"><option value="pt">Português</option><option value="en">English</option></select><button id="wake" class="secondary" type="button" aria-pressed="false" data-i18n="keepAwake">Manter tela ativa</button></div>
+  </header>
+  <main class="container">
+    <nav class="tabs" aria-label="Training modes"><button class="tab active" type="button" data-mode="drill" aria-current="page" data-i18n="drill">Drills</button><button class="tab" type="button" data-mode="sparring" data-i18n="sparring">Sparring</button></nav>
+    <section class="timer-panel" id="timerPanel" aria-label="Cronômetro">
+      <div class="timer-top"><span id="phase" class="phase">DRILL</span><span id="progress">1 / 1</span></div>
+      <div id="athlete" class="athlete">ATLETA AZUL</div>
+      <div id="clock" class="clock" role="timer" aria-live="off">01:00</div>
+      <div id="currentTechnique" class="current-technique">—</div>
+      <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
+      <div class="timer-controls"><button id="previous" class="secondary" type="button" data-i18n="previous">Anterior</button><button id="start" class="primary" type="button" data-i18n="start">Iniciar</button><button id="next" class="secondary" type="button" data-i18n="next">Próximo</button><button id="reset" class="ghost" type="button" data-i18n="reset">Reiniciar</button></div>
+    </section>
+    <section id="drillSettings" class="settings-grid">
+      <div class="card"><h2 data-i18n="drillSettings">Configurar drill</h2><div class="fields"><label><span data-i18n="duration">Segundos por etapa</span><input id="drillSeconds" type="number" min="5" max="3600" value="60"></label><label><span data-i18n="participants">Participantes</span><select id="participants"><option value="1" data-i18n="one">1 pessoa</option><option value="2" data-i18n="two">2 pessoas</option></select></label><label><span data-i18n="sets">Séries por técnica</span><input id="sets" type="number" min="1" max="50" value="1"></label><label><span data-i18n="firstAthlete">Primeiro atleta</span><select id="firstAthlete"><option value="blue" data-i18n="blue">Azul</option><option value="green" data-i18n="green">Verde</option></select></label></div><p class="hint" data-i18n="drillHint">Com 2 pessoas, cada atleta executa cada técnica em cada série.</p></div>
+      <div class="card"><h2 data-i18n="techniques">Biblioteca de técnicas</h2><form id="addTechnique" class="add-technique"><label class="sr-only" for="techniqueName" data-i18n="techniqueName">Nome da técnica</label><input id="techniqueName" type="text" maxlength="90" required placeholder="Ex.: Passagem de guarda"><button class="primary" type="submit" data-i18n="add">Adicionar</button></form><div id="techniqueList" class="technique-list"></div><div class="list-actions"><button id="selectAll" class="secondary" type="button" data-i18n="selectAll">Selecionar todas</button><button id="clearSelection" class="secondary" type="button" data-i18n="clear">Limpar seleção</button></div><p class="hint" data-i18n="techHint">Marque as técnicas que entrarão na sessão. Arraste não é necessário: a ordem da lista define a sequência.</p></div>
+    </section>
+    <section id="sparringSettings" class="card hidden"><h2 data-i18n="sparringSettings">Configurar sparring</h2><div class="fields"><label><span data-i18n="prep">Preparação (segundos)</span><input id="prepSeconds" type="number" min="0" max="3600" value="10"></label><label><span data-i18n="fight">Sparring (segundos)</span><input id="fightSeconds" type="number" min="5" max="7200" value="300"></label><label><span data-i18n="rest">Descanso (segundos)</span><input id="restSeconds" type="number" min="0" max="3600" value="60"></label><label><span data-i18n="rounds">Rounds</span><input id="rounds" type="number" min="1" max="99" value="5"></label></div><p class="hint" data-i18n="sparringHint">Sequência: preparar → sparring → descanso. O último round termina sem descanso.</p></section>
+    <p id="message" class="message" role="status" aria-live="polite"></p>
+  </main>
+  <footer class="container footer">AWAKEN · BRIGHT SIDE OF JIU JITSU</footer>
+</body>
+</html>
