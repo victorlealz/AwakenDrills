@@ -2,16 +2,23 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
   <meta name="theme-color" content="#080f1d">
-  <meta name="description" content="Awaken Drills: cron&#244;metros de drills e sparring de Jiu-Jitsu.">
+  <meta name="description" content="Awaken Drills: cronometros de drills e sparring de Jiu-Jitsu.">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Awaken Drills">
   <title>Awaken Drills</title>
+  <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" type="image/png" href="./assets/images/awaken-symbol.png">
+  <link rel="apple-touch-icon" href="./assets/images/awaken-symbol.png">
   <link rel="stylesheet" href="./css/style.css">
   <script src="./js/main.js" defer></script>
 </head>
 <body data-page="drill">
-  <a class="skipLink" href="#mainContent" data-i18n="skipContent">Ir para o conte&#250;do</a>
+  <a class="skipLink" href="#mainContent" data-i18n="skipContent">Ir para o conteudo</a>
+
   <header class="appHeader">
     <div class="brand">
       <img src="./assets/images/awaken-symbol.png" alt="Awaken" width="46" height="46">
@@ -26,11 +33,11 @@
         <svg class="icon" aria-hidden="true"><use href="./assets/icons/ui.svg#menu"></use></svg>
       </button>
     </div>
-    <nav id="menu" class="dropdownMenu" aria-label="Navega&#231;&#227;o" data-i18n-aria="navigation" hidden>
+    <nav id="menu" class="dropdownMenu" aria-label="Navegacao" data-i18n-aria="navigation" hidden>
       <button type="button" data-page="drill" data-i18n="drills" aria-current="page">Drills</button>
       <button type="button" data-page="sparring" data-i18n="sparring">Sparring</button>
-      <button type="button" data-page="library" data-i18n="techniques">T&#233;cnicas</button>
-      <button type="button" data-page="timer" data-i18n="timer" id="timerMenu" disabled>Cron&#244;metro</button>
+      <button type="button" data-page="library" data-i18n="techniques">Tecnicas</button>
+      <button type="button" data-page="timer" data-i18n="timer" id="timerMenu" disabled>Cronometro</button>
     </nav>
   </header>
 
@@ -41,7 +48,11 @@
         <div class="setupGrid">
           <div class="field">
             <label for="participants" data-i18n="athletes">Atletas</label>
-            <select id="participants"><option value="1">1</option><option value="2" selected>2</option></select>
+            <select id="participants">
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+            </select>
           </div>
           <div class="field">
             <label for="drillPrepSec" data-i18n="prepare">Preparar</label>
@@ -56,13 +67,15 @@
             </div>
           </fieldset>
         </div>
+
         <label class="switchField" id="alternateField">
           <span data-i18n="alternateAthletes">Alternar Atletas</span>
           <input id="alternateTiming" type="checkbox" role="switch" checked>
           <span class="switchTrack" aria-hidden="true"></span>
         </label>
+
         <div id="athleteSettings" class="athleteGrid">
-          <div class="athleteCard">
+          <div class="athleteCard" id="athleteOne">
             <div class="field">
               <label for="athlete1" data-i18n="athlete1">Atleta 1</label>
               <input id="athlete1" maxlength="32" autocomplete="off" placeholder="Atleta 1">
@@ -70,9 +83,11 @@
             <div class="colorChoices" data-athlete="1" role="group" data-i18n-aria="athlete1Color" aria-label="Cor do atleta 1">
               <button type="button" class="colorDot" data-color="green" data-i18n-aria="green" aria-label="Verde" aria-pressed="true"></button>
               <button type="button" class="colorDot" data-color="blue" data-i18n-aria="blue" aria-label="Azul" aria-pressed="false"></button>
+              <button type="button" class="colorDot" data-color="red" data-i18n-aria="red" aria-label="Vermelho" aria-pressed="false"></button>
             </div>
-            <div id="tech1" class="techChoices" role="group" data-i18n-aria="athlete1Techniques" aria-label="T&#233;cnicas do atleta 1"></div>
+            <div id="tech1" class="techChoices" role="group" data-i18n-aria="athlete1Techniques" aria-label="Tecnicas do atleta 1"></div>
           </div>
+
           <div class="athleteCard" id="athleteTwo">
             <div class="field">
               <label for="athlete2" data-i18n="athlete2">Atleta 2</label>
@@ -81,8 +96,22 @@
             <div class="colorChoices" data-athlete="2" role="group" data-i18n-aria="athlete2Color" aria-label="Cor do atleta 2">
               <button type="button" class="colorDot" data-color="green" data-i18n-aria="green" aria-label="Verde" aria-pressed="false"></button>
               <button type="button" class="colorDot" data-color="blue" data-i18n-aria="blue" aria-label="Azul" aria-pressed="true"></button>
+              <button type="button" class="colorDot" data-color="red" data-i18n-aria="red" aria-label="Vermelho" aria-pressed="false"></button>
             </div>
-            <div id="tech2" class="techChoices" role="group" data-i18n-aria="athlete2Techniques" aria-label="T&#233;cnicas do atleta 2"></div>
+            <div id="tech2" class="techChoices" role="group" data-i18n-aria="athlete2Techniques" aria-label="Tecnicas do atleta 2"></div>
+          </div>
+
+          <div class="athleteCard" id="athleteThree">
+            <div class="field">
+              <label for="athlete3" data-i18n="athlete3">Atleta 3</label>
+              <input id="athlete3" maxlength="32" autocomplete="off" placeholder="Atleta 3">
+            </div>
+            <div class="colorChoices" data-athlete="3" role="group" data-i18n-aria="athlete3Color" aria-label="Cor do atleta 3">
+              <button type="button" class="colorDot" data-color="green" data-i18n-aria="green" aria-label="Verde" aria-pressed="false"></button>
+              <button type="button" class="colorDot" data-color="blue" data-i18n-aria="blue" aria-label="Azul" aria-pressed="false"></button>
+              <button type="button" class="colorDot" data-color="red" data-i18n-aria="red" aria-label="Vermelho" aria-pressed="true"></button>
+            </div>
+            <div id="tech3" class="techChoices" role="group" data-i18n-aria="athlete3Techniques" aria-label="Tecnicas do atleta 3"></div>
           </div>
         </div>
         <button class="primaryButton" id="launchDrill" type="button" data-i18n="start">Iniciar</button>
@@ -123,11 +152,15 @@
     </section>
 
     <section id="libraryPage" class="page" aria-labelledby="libraryTitle" hidden>
-      <h1 id="libraryTitle" tabindex="-1" data-i18n="techniques">T&#233;cnicas</h1>
+      <h1 id="libraryTitle" tabindex="-1" data-i18n="techniques">Tecnicas</h1>
       <div class="panel">
-        <form id="addTechnique" class="addForm">
-          <select id="owner" data-i18n-aria="athlete" aria-label="Atleta"><option value="1">Atleta 1</option><option value="2">Atleta 2</option></select>
-          <input id="techniqueName" maxlength="90" required autocomplete="off" data-i18n-aria="technique" aria-label="T&#233;cnica" placeholder="T&#233;cnica">
+        <form id="addTechnique" class="addForm" novalidate>
+          <select id="owner" data-i18n-aria="athlete" aria-label="Atleta">
+            <option value="1">Atleta 1</option>
+            <option value="2">Atleta 2</option>
+            <option value="3">Atleta 3</option>
+          </select>
+          <input id="techniqueName" maxlength="90" autocomplete="off" data-i18n-aria="technique" aria-label="Tecnica" placeholder="Tecnica">
           <button class="primaryButton" type="submit" data-i18n="add">Adicionar</button>
         </form>
         <div id="libraryList" class="libraryList"></div>
@@ -150,11 +183,16 @@
             </button>
           </div>
         </div>
+
         <div class="timerCenter">
-          <div class="timerDetails"><div id="timerAthlete"></div><div id="timerTechnique"></div></div>
+          <div class="timerDetails">
+            <div id="timerAthlete"></div>
+            <div id="timerTechnique"></div>
+          </div>
           <div id="clock" role="timer" aria-live="off">00:00</div>
           <div id="progress">0 / 0</div>
         </div>
+
         <div class="timerBottom">
           <progress id="progressBar" value="0" max="1" data-i18n-aria="elapsed" aria-label="Tempo decorrido"></progress>
           <div class="timerControls">
@@ -162,7 +200,7 @@
               <svg class="icon" aria-hidden="true"><use href="./assets/icons/ui.svg#previous"></use></svg>
             </button>
             <button id="play" class="playButton" type="button" data-i18n="start">Iniciar</button>
-            <button id="next" type="button" class="iconButton" data-i18n-aria="next" aria-label="Pr&#243;ximo">
+            <button id="next" type="button" class="iconButton" data-i18n-aria="next" aria-label="Proximo">
               <svg class="icon" aria-hidden="true"><use href="./assets/icons/ui.svg#next"></use></svg>
             </button>
           </div>
@@ -171,7 +209,7 @@
               <svg class="smallIcon" aria-hidden="true"><use href="./assets/icons/ui.svg#reset"></use></svg>
               <span data-i18n="reset">Reiniciar</span>
             </button>
-            <button id="wake" type="button" class="textButton wakeStatus" aria-label="Tela ativa autom&#225;tica" data-state="idle">
+            <button id="wake" type="button" class="textButton wakeStatus" aria-label="Tela ativa automatica" data-state="idle">
               <svg class="smallIcon" aria-hidden="true"><use href="./assets/icons/ui.svg#screen"></use></svg>
               <span id="wakeText">Tela Ativa</span><span class="statusDot" aria-hidden="true"></span>
             </button>
@@ -181,8 +219,17 @@
         <p id="timerAnnouncement" class="visuallyHidden" role="status" aria-live="polite" aria-atomic="true"></p>
       </div>
     </section>
+
     <p id="message" class="message" role="status" aria-live="polite" hidden></p>
     <noscript>Ative o JavaScript para usar o Awaken Drills. Enable JavaScript to use Awaken Drills.</noscript>
   </main>
+
+  <div id="popup" class="popupOverlay" role="alertdialog" aria-modal="true" aria-labelledby="popupTitle" aria-describedby="popupMessage" hidden>
+    <div class="popupCard">
+      <h2 id="popupTitle" data-i18n="errorTitle">Aviso</h2>
+      <p id="popupMessage"></p>
+      <button id="popupClose" class="primaryButton" type="button" data-i18n="ok">OK</button>
+    </div>
+  </div>
 </body>
 </html>

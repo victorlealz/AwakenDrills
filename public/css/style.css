@@ -9,20 +9,23 @@
   --aqua: #14dcd1;
   --blue: #104d98;
   --green: #12633f;
+  --red: #9d2430;
+  --finished: #bd101c;
   --headerHeight: 72px;
   --pageSpace: 16px;
   --radius: 20px;
 }
-
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html { min-width: 280px; -webkit-text-size-adjust: 100%; }
+html { min-width: 280px; min-height: 100%; -webkit-text-size-adjust: 100%; background: var(--background); }
 body {
   margin: 0;
+  min-height: 100dvh;
   background: var(--background);
   color: var(--text);
   font: 400 1rem/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: contain;
 }
 button, input, select { font: inherit; }
 button, select { touch-action: manipulation; }
@@ -34,7 +37,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   outline-offset: 4px;
 }
 h1:focus, main:focus { outline: none; }
-button { transition: background-color .15s, border-color .15s; }
+button { transition: background-color .15s, border-color .15s, opacity .15s; }
 svg { flex-shrink: 0; }
 .icon { display: block; width: 22px; height: 22px; }
 .smallIcon { width: 18px; height: 18px; }
@@ -49,9 +52,8 @@ svg { flex-shrink: 0; }
   white-space: nowrap;
   border: 0;
 }
-.skipLink:focus { position: fixed; z-index: 200; padding: 12px; background: var(--surface); color: var(--text); }
+.skipLink:focus { position: fixed; z-index: 300; padding: 12px; background: var(--surface); color: var(--text); }
 
-/* Brand and the only navigation between configuration screens. */
 .appHeader {
   position: relative;
   z-index: 10;
@@ -69,7 +71,7 @@ svg { flex-shrink: 0; }
 }
 .brand { display: flex; align-items: center; gap: 9px; white-space: nowrap; font-size: clamp(.9rem, 4vw, 1.1rem); font-weight: 700; letter-spacing: -.025em; }
 .brand b { color: var(--aqua); font-weight: inherit; }
-.brand img { width: 42px; height: 42px; object-fit: contain; }
+.brand img { width: 42px; height: 42px; object-fit: contain; border-radius: 10px; }
 .headerActions { display: flex; align-items: center; gap: 8px; }
 #language { width: 68px; padding: 8px; }
 .iconButton {
@@ -98,7 +100,6 @@ svg { flex-shrink: 0; }
 .dropdownMenu button { display: block; width: 100%; border: 0; border-radius: 10px; padding: 12px; text-align: left; background: transparent; color: var(--text); }
 .dropdownMenu button[aria-current="page"] { color: var(--aqua); background: #1e344a; }
 
-/* Single-column first; larger screens progressively gain columns. */
 main { max-width: 960px; margin: 0 auto; padding: 24px var(--pageSpace) max(24px, env(safe-area-inset-bottom)); }
 .page > h1 { margin: 0 0 18px; font-size: clamp(1.55rem, 4vw, 2rem); font-weight: 700; line-height: 1.2; letter-spacing: -.035em; }
 .panel { display: grid; gap: 22px; padding: 18px; border: 1px solid #29394e; border-radius: var(--radius); background: var(--surface); }
@@ -122,12 +123,14 @@ input::placeholder { color: var(--muted); opacity: 1; }
 .switchField > input:checked + .switchTrack { background: var(--aqua); }
 .switchField > input:checked + .switchTrack::after { background: #062a35; transform: translateX(20px); }
 .switchField > input:focus-visible + .switchTrack { outline: 3px solid var(--aqua); outline-offset: 5px; }
+
 .athleteGrid { display: grid; gap: 14px; }
 .athleteCard { display: grid; align-content: start; gap: 12px; min-width: 0; padding: 16px; border: 1px solid var(--border); border-radius: 15px; background: #0e192b; }
 .colorChoices { display: flex; align-items: center; gap: 6px; }
 .colorDot { display: grid; place-items: center; width: 48px; padding: 0; border: 0; border-radius: 50%; background: transparent; }
 .colorDot::before { content: ""; width: 28px; height: 28px; border-radius: 50%; background: #1aaf70; }
 .colorDot[data-color="blue"]::before { background: #2078e5; }
+.colorDot[data-color="red"]::before { background: #dd4654; }
 .colorDot[aria-pressed="true"]::before { outline: 2px solid white; outline-offset: 4px; }
 .techChoices { display: grid; gap: 5px; }
 .techChoices:empty { display: none; }
@@ -142,7 +145,7 @@ input::placeholder { color: var(--muted); opacity: 1; }
 .libraryRow > span { min-width: 0; overflow-wrap: anywhere; }
 .message { padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; color: var(--aqua); }
 
-/* Timer: tabular digits, large touch controls, safe-area insets. */
+/* Timer */
 body[data-page="timer"] main {
   padding: var(--pageSpace);
   padding-left: max(var(--pageSpace), env(safe-area-inset-left));
@@ -151,13 +154,14 @@ body[data-page="timer"] main {
 }
 .timerPage { height: calc(100svh - var(--headerHeight) - 2 * var(--pageSpace) - env(safe-area-inset-top)); min-height: 420px; }
 .timerPanel {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 14px;
   height: 100%;
   min-width: 0;
-  overflow-y: auto;
+  overflow: hidden;
   padding: 16px;
   border: 1px solid #ffffff24;
   border-radius: var(--radius);
@@ -166,8 +170,10 @@ body[data-page="timer"] main {
   transition: background-color .2s;
 }
 .timerPanel[data-tone="green"] { background: var(--green); }
+.timerPanel[data-tone="red"] { background: var(--red); }
 .timerPanel[data-tone="prepare"] { background: #534017; }
 .timerPanel[data-tone="rest"] { background: #24394f; }
+.timerPanel[data-tone="finished"] { background: var(--finished); }
 .timerTop { display: flex; align-items: center; gap: 8px; min-height: 48px; }
 .timerTop h1 { flex: 1; margin: 0; font-size: clamp(1rem, 3vw, 1.2rem); line-height: 1.2; font-weight: 600; letter-spacing: 0; overflow-wrap: anywhere; }
 .timerTools { display: flex; gap: 6px; }
@@ -177,7 +183,8 @@ body[data-page="timer"] main {
 .timerDetails { display: grid; gap: 4px; }
 #timerAthlete { font-size: clamp(1rem, 3.5vw, 1.45rem); font-weight: 500; overflow-wrap: anywhere; }
 #timerTechnique { font-size: clamp(1.05rem, 4vw, 1.65rem); line-height: 1.3; font-weight: 600; overflow-wrap: anywhere; }
-#clock { margin: 6px 0 0; font-size: clamp(3.5rem, 20vw, 9rem); font-weight: 750; font-variant-numeric: tabular-nums; letter-spacing: -.055em; line-height: 1.12; white-space: nowrap; }
+#clock { margin: 6px 0 0; font-size: clamp(3.5rem, 20vw, 9rem); font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.055em; line-height: 1.12; white-space: nowrap; }
+.timerPanel[data-tone="finished"] #clock { font-size: clamp(4.5rem, 26vw, 12rem); letter-spacing: .02em; }
 #progress { margin-top: 10px; font-variant-numeric: tabular-nums; font-size: .9rem; opacity: .88; }
 .timerBottom { display: grid; gap: 14px; }
 #progressBar { display: block; appearance: none; width: 100%; height: 5px; border: 0; border-radius: 10px; overflow: hidden; background: #ffffff40; color: white; }
@@ -193,19 +200,78 @@ body[data-page="timer"] main {
 .wakeStatus[data-state="unavailable"] .statusDot { background: #ffd595; }
 .timerNotice { margin: 0; font-size: .8rem; line-height: 1.4; color: #fff2d9; text-align: center; }
 .timerPanel :focus-visible { outline-color: white; }
-.timerPanel.isExpanded, .timerPanel:fullscreen {
+
+/* Expanded/fullscreen mode: by default ONLY the running time is visible. */
+.timerPanel.isExpanded {
   position: fixed;
   inset: 0;
-  z-index: 100;
-  width: 100%;
+  z-index: 200;
+  width: 100vw;
   height: 100vh;
   height: 100dvh;
   min-height: 0;
   border: 0;
   border-radius: 0;
-  padding: max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+  padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+  justify-content: center;
 }
 body.hasExpandedTimer { overflow: hidden; }
+body.hasExpandedTimer .appHeader { visibility: hidden; }
+body.hasExpandedTimer main { max-width: none; padding: 0; }
+body.hasExpandedTimer .timerPage { height: 100dvh; }
+.timerPanel.isExpanded .timerCenter { display: grid; place-items: center; width: 100%; height: 100%; }
+.timerPanel.isExpanded .timerDetails,
+.timerPanel.isExpanded #progress,
+.timerPanel.isExpanded #progressBar,
+.timerPanel.isExpanded .timerUtility,
+.timerPanel.isExpanded .timerNotice,
+.timerPanel.isExpanded .timerTop h1 { display: none !important; }
+.timerPanel.isExpanded #clock {
+  margin: 0;
+  font-size: clamp(5rem, min(30vw, 44dvh), 24rem);
+  line-height: .95;
+  user-select: none;
+}
+.timerPanel.isExpanded[data-tone="finished"] #clock { font-size: clamp(6rem, min(32vw, 48dvh), 26rem); }
+.timerPanel.isExpanded .timerTop,
+.timerPanel.isExpanded .timerBottom {
+  position: absolute;
+  left: max(12px, env(safe-area-inset-left));
+  right: max(12px, env(safe-area-inset-right));
+  z-index: 5;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .18s ease, visibility .18s ease;
+}
+.timerPanel.isExpanded .timerTop { top: max(12px, env(safe-area-inset-top)); justify-content: space-between; }
+.timerPanel.isExpanded .timerTop .timerTools { margin-left: auto; }
+.timerPanel.isExpanded .timerBottom { bottom: max(12px, env(safe-area-inset-bottom)); }
+.timerPanel.isExpanded.controlsVisible .timerTop,
+.timerPanel.isExpanded.controlsVisible .timerBottom {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.timerPanel.isExpanded .timerBottom > :not(.timerControls) { display: none !important; }
+.timerPanel.isExpanded .timerControls { width: min(92vw, 420px); padding: 8px; border-radius: 16px; background: #06152680; backdrop-filter: blur(8px); }
+.timerPanel.isExpanded .timerTop .iconButton { background: #06152680; backdrop-filter: blur(8px); }
+
+/* Error popup */
+.popupOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+  background: #02060ccc;
+  backdrop-filter: blur(6px);
+}
+.popupCard { width: min(100%, 430px); padding: 22px; border: 1px solid #53657c; border-radius: 18px; background: #152238; box-shadow: 0 20px 70px #000b; }
+.popupCard h2 { margin: 0 0 10px; font-size: 1.2rem; }
+.popupCard p { margin: 0 0 20px; color: #e7eef7; white-space: pre-line; overflow-wrap: anywhere; }
+.popupCard .primaryButton { width: 100%; }
 
 @media (hover: hover) {
   .primaryButton:hover { background: #60e9e0; }
@@ -219,13 +285,12 @@ body.hasExpandedTimer { overflow: hidden; }
   main { padding-top: 32px; }
   .panel { padding: 26px; }
   .athleteGrid:not(.singleAthlete) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .athleteGrid[data-count="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .addForm { grid-template-columns: 170px minmax(0, 1fr) auto; }
-  .libraryList { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px; }
+  .libraryList { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
   .timerPanel { padding: 26px; }
   .timePicker { max-width: 430px; }
   #sparringPage .timeField { grid-column: auto; }
-  .timerPanel.isExpanded, .timerPanel:fullscreen { padding: max(28px, env(safe-area-inset-top)) max(32px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom)) max(32px, env(safe-area-inset-left)); }
-  .timerPanel.isExpanded #clock, .timerPanel:fullscreen #clock { font-size: clamp(5rem, min(26vw, 34dvh), 20rem); }
 }
 @media (max-width: 340px) {
   :root { --pageSpace: 12px; }
@@ -243,12 +308,12 @@ body.hasExpandedTimer { overflow: hidden; }
   .appHeader { padding-top: 5px; padding-bottom: 5px; }
   body[data-page="timer"] main { max-width: none; }
   .timerPage { min-height: 0; }
-  .timerPanel { gap: 4px; padding: 8px 14px; }
+  .timerPanel:not(.isExpanded) { gap: 4px; padding: 8px 14px; }
   .timerTop, .timerTop .iconButton { min-height: 44px; }
   .timerTop .iconButton { width: 44px; min-width: 44px; }
   .timerDetails { display: flex; align-items: baseline; justify-content: center; gap: 12px; }
   #timerAthlete, #timerTechnique { font-size: .95rem; }
-  #clock { font-size: clamp(2.9rem, 19dvh, 5rem); margin: 0; line-height: 1; }
+  .timerPanel:not(.isExpanded) #clock { font-size: clamp(2.9rem, 19dvh, 5rem); margin: 0; line-height: 1; }
   #progress { margin-top: 1px; font-size: .75rem; }
   .timerBottom { grid-template-columns: minmax(0, 1fr) auto; gap: 5px 16px; }
   #progressBar { grid-column: 1 / -1; height: 4px; }
@@ -256,13 +321,6 @@ body.hasExpandedTimer { overflow: hidden; }
   .timerControls { max-width: 340px; gap: 8px; }
   .timerControls .iconButton, .playButton { min-height: 44px; }
   .timerNotice { grid-column: 1 / -1; }
-  .timerPanel.isExpanded, .timerPanel:fullscreen { padding: max(10px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
-  .timerPanel.isExpanded #clock, .timerPanel:fullscreen #clock { font-size: clamp(3.5rem, 28dvh, 8rem); }
-}
-@media (orientation: landscape) and (max-height: 360px) {
-  #clock { font-size: clamp(2.5rem, 16dvh, 3.5rem); }
-  #timerAthlete, #timerTechnique { font-size: .85rem; line-height: 1.25; }
-  .timerDetails { gap: 8px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
