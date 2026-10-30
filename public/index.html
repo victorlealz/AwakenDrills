@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#050608">
+  <meta name="color-scheme" content="dark light">
+  <meta name="description" content="Awaken Drills: timer mobile-first para drills e sparring de Jiu-Jitsu.">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Awaken Drills">
+  <title>Awaken Drills</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/assets/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/app.css">
+  <script type="module" src="/js/app.mjs"></script>
+</head>
+<body>
+  <header class="app-header" id="appHeader">
+    <a class="brand" href="/" aria-label="Awaken Drills">
+      <img src="/assets/icon-192.png" alt="Awaken Bright Side of Jiu Jitsu" width="44" height="44">
+      <span>Awaken <strong>Drills</strong></span>
+    </a>
+    <div class="header-actions">
+      <button class="icon-button" id="settingsToggle" type="button" aria-label="Abrir configuracoes" aria-expanded="false" aria-controls="settingsMenu" data-i18n-aria="openSettings">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.7a3.3 3.3 0 1 0 0 6.6 3.3 3.3 0 0 0 0-6.6Zm9 3.3c0-.5 0-.9-.1-1.4l-2.2-.7a7.2 7.2 0 0 0-.7-1.6l1-2.1a9.7 9.7 0 0 0-2-2l-2.1 1a7.2 7.2 0 0 0-1.6-.7L12.6 2a9.6 9.6 0 0 0-2.8 0l-.7 2.3a7.2 7.2 0 0 0-1.6.7l-2.1-1a9.7 9.7 0 0 0-2 2l1 2.1a7.2 7.2 0 0 0-.7 1.6l-2.3.7a9.6 9.6 0 0 0 0 2.8l2.3.7c.2.6.4 1.1.7 1.6l-1 2.1a9.7 9.7 0 0 0 2 2l2.1-1c.5.3 1 .5 1.6.7l.7 2.3a9.6 9.6 0 0 0 2.8 0l.7-2.3c.6-.2 1.1-.4 1.6-.7l2.1 1a9.7 9.7 0 0 0 2-2l-1-2.1c.3-.5.5-1 .7-1.6l2.2-.7c.1-.4.1-.9.1-1.4Z"/></svg>
+      </button>
+    </div>
+
+    <section class="settings-menu" id="settingsMenu" hidden aria-label="Configuracoes" data-i18n-aria="settings">
+      <div class="settings-title-row"><h2 data-i18n="settings">Configura&ccedil;&otilde;es</h2><span data-i18n="generalPreferences">Prefer&ecirc;ncias gerais</span></div>
+
+      <div class="settings-row language-row">
+        <span><strong data-i18n="language">Idioma</strong><small>PT / EN</small></span>
+        <div class="language-toggle" role="group" aria-label="Idioma / Language">
+          <button id="langPT" type="button" data-lang="pt-BR" aria-pressed="true">PT</button>
+          <button id="langEN" type="button" data-lang="en" aria-pressed="false">EN</button>
+        </div>
+      </div>
+
+      <label class="settings-row switch-row">
+        <span><strong data-i18n="sound">Som</strong><small data-i18n="bellsAndAlerts">Sinos e alertas</small></span>
+        <input id="audioEnabled" type="checkbox" checked>
+        <i aria-hidden="true"></i>
+      </label>
+      <label class="settings-row">
+        <span><strong data-i18n="bell">Sino</strong><small data-i18n="bellHelp">Som ao trocar ou finalizar</small></span>
+        <select id="bellType" aria-label="Tipo de sino" data-i18n-aria="bellTypeLabel">
+          <option value="ring" data-i18n="bellRing">Ringue cl&aacute;ssico</option>
+          <option value="double" data-i18n="bellDouble">Ringue duplo</option>
+          <option value="vintage" data-i18n="bellVintage">Ringue vintage</option>
+          <option value="boxing" data-i18n="bellBoxing">Boxing Bell</option>
+          <option value="smash" data-i18n="bellSmash">I'm gonna smash your boy</option>
+          <option value="faaah" data-i18n="bellFaaah">Faaah</option>
+          <option value="fart" data-i18n="bellFart">Dry Fart</option>
+        </select>
+      </label>
+      <button class="settings-preview" id="previewBell" type="button" data-i18n="previewBell">Ouvir sino</button>
+      <label class="settings-row switch-row">
+        <span><strong data-i18n="showTechniqueFullscreen">Mostrar técnica em fullscreen?</strong><small data-i18n="showTechniqueFullscreenHelp">Exibe a técnica por 2 segundos antes do drill</small></span>
+        <input id="showTechniqueFullscreen" type="checkbox">
+        <i aria-hidden="true"></i>
+      </label>
+      <label class="settings-row switch-row">
+        <span><strong data-i18n="finalCountdown">Contagem final</strong><small data-i18n="finalCountdownHelp">Bipes em 3, 2 e 1 segundos</small></span>
+        <input id="countdownBeeps" type="checkbox" checked>
+        <i aria-hidden="true"></i>
+      </label>
+      <label class="settings-row switch-row">
+        <span><strong data-i18n="keepAwake">Manter tela ativa</strong><small data-i18n="keepAwakeHelp">Durante cron&ocirc;metros em execu&ccedil;&atilde;o</small></span>
+        <input id="wakeLockEnabled" type="checkbox" checked>
+        <i aria-hidden="true"></i>
+      </label>
+      <button class="settings-danger" id="restoreDefaults" type="button" data-i18n="restoreDefaults">Restaurar padr&otilde;es</button>
+    </section>
+  </header>
+
+  <main class="app-shell" id="appShell">
+    <section class="mode-switch" aria-label="Tipo de treino" data-i18n-aria="trainingType">
+      <button type="button" class="mode-button is-active" data-mode="drill" aria-pressed="true">Drill</button>
+      <button type="button" class="mode-button" data-mode="sparring" aria-pressed="false">Sparring</button>
+      <button type="button" class="mode-button mode-button-infinity" data-mode="infinite" aria-pressed="false" aria-label="Contagem infinita" data-i18n-aria="infiniteCount">∞</button>
+    </section>
+
+    <section class="setup-view" id="setupView">
+      <div id="drillSetup" class="mode-panel">
+        <div class="hero-copy hero-copy-compact">
+          <p class="eyebrow">JIU-JITSU TIMER</p>
+          <h1 data-i18n="drillsTitle">Drills</h1>
+        </div>
+
+        <div class="card compact-grid">
+          <label class="field"><span data-i18n="athletes">Atletas</span><select id="athleteCount"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></label>
+          <label class="field"><span data-i18n="setsPerAthlete">S&eacute;ries por atleta</span><select id="drillSets"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>8</option><option>10</option></select></label>
+          <label class="field"><span data-i18n="prepare">Preparar</span><select id="drillPrep"><option value="0">0 s</option><option value="3">3 s</option><option value="5" selected>5 s</option><option value="10">10 s</option><option value="15">15 s</option><option value="20">20 s</option><option value="30">30 s</option></select></label>
+          <div class="field"><span data-i18n="drillTime">Tempo do drill</span><div class="time-inputs"><label><input id="drillMinutes" type="number" inputmode="numeric" min="0" max="60" value="1" aria-label="Minutos do drill" data-i18n-aria="drillMinutes"><small>min</small></label><b>:</b><label><input id="drillSeconds" type="number" inputmode="numeric" min="0" max="59" value="0" aria-label="Segundos do drill" data-i18n-aria="drillSeconds"><small data-i18n="secShort">seg</small></label></div></div>
+        </div>
+
+        <div class="section-title"><h2 data-i18n="athletes">Atletas</h2><span data-i18n="colorIsBackground">Cor = fundo do cron&ocirc;metro</span></div>
+        <div class="athletes" id="athletesContainer"></div>
+        <button class="primary-button" id="startDrill" type="button" data-i18n="startDrill">Iniciar drill</button>
+      </div>
+
+      <div id="sparringSetup" class="mode-panel" hidden>
+        <div class="hero-copy hero-copy-compact">
+          <p class="eyebrow">SPARRING TIMER</p>
+          <h1 data-i18n="roundsTitle">Rounds</h1>
+        </div>
+
+        <div class="card compact-grid">
+          <label class="field"><span data-i18n="rounds">Rounds</span><select id="sparringRounds"><option>1</option><option>2</option><option>3</option><option>4</option><option selected>5</option><option>6</option><option>8</option><option>10</option><option>12</option></select></label>
+          <label class="field"><span data-i18n="prepare">Preparar</span><select id="sparringPrep"><option value="0">0 s</option><option value="3">3 s</option><option value="5">5 s</option><option value="10" selected>10 s</option><option value="15">15 s</option><option value="30">30 s</option></select></label>
+          <div class="field"><span data-i18n="round">Round</span><div class="time-inputs"><label><input id="sparringMinutes" type="number" inputmode="numeric" min="0" max="60" value="5" aria-label="Minutos do round" data-i18n-aria="roundMinutes"><small>min</small></label><b>:</b><label><input id="sparringSeconds" type="number" inputmode="numeric" min="0" max="59" value="0" aria-label="Segundos do round" data-i18n-aria="roundSeconds"><small data-i18n="secShort">seg</small></label></div></div>
+          <div class="field"><span data-i18n="rest">Descanso</span><div class="time-inputs"><label><input id="restMinutes" type="number" inputmode="numeric" min="0" max="30" value="1" aria-label="Minutos de descanso" data-i18n-aria="restMinutes"><small>min</small></label><b>:</b><label><input id="restSeconds" type="number" inputmode="numeric" min="0" max="59" value="0" aria-label="Segundos de descanso" data-i18n-aria="restSeconds"><small data-i18n="secShort">seg</small></label></div></div>
+        </div>
+        <button class="primary-button" id="startSparring" type="button" data-i18n="startSparring">Iniciar sparring</button>
+      </div>
+      <div id="infiniteSetup" class="mode-panel" hidden>
+        <div class="hero-copy hero-copy-compact">
+          <p class="eyebrow">OPEN TIMER</p>
+          <h1 data-i18n="infiniteCount">Contagem Infinita</h1>
+        </div>
+        <div class="card infinite-card">
+          <p data-i18n="infiniteHelp">Cronômetro crescente de 00:00 até você parar.</p>
+        </div>
+        <button class="primary-button" id="startInfinite" type="button" data-i18n="startInfinite">Iniciar contagem</button>
+      </div>
+    </section>
+  </main>
+
+  <section class="timer-screen" id="timerScreen" hidden aria-label="Cronometro" data-i18n-aria="timer">
+    <div class="timer-chrome timer-top">
+      <button class="timer-icon" id="backButton" type="button" aria-label="Voltar" data-i18n-aria="back">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15.5 5-7 7 7 7"/></svg>
+      </button>
+      <div class="phase-meta"><span id="phaseLabel">PREPARAR</span><small id="phaseProgress"></small></div>
+      <button class="timer-icon" id="fullscreenButton" type="button" aria-label="Tela cheia / modo foco" data-i18n-aria="fullscreen">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg>
+      </button>
+    </div>
+
+    <div class="timer-center" id="timerCenter" title="No modo foco, toque no tempo para sair" data-i18n-title="focusExitHint">
+      <p class="athlete-name" id="timerAthlete"></p>
+      <div class="technique-cue" id="techniqueCue" hidden><small data-i18n="nextTechnique">PR&Oacute;XIMA T&Eacute;CNICA</small><strong id="techniqueText"></strong></div>
+      <time class="clock" id="clock" role="timer" aria-live="off">00:00</time>
+      <p class="current-technique" id="currentTechnique"></p>
+    </div>
+
+    <div class="timer-chrome timer-bottom">
+      <div class="phase-bar"><span id="phaseBarFill"></span></div>
+      <div class="timer-controls">
+        <button class="timer-icon" id="previousPhase" type="button" aria-label="Fase anterior" data-i18n-aria="previousPhase">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14M18 6l-8 6 8 6Z"/></svg>
+        </button>
+        <button class="play-button" id="playPause" type="button" data-i18n="pause">Pausar</button>
+        <button class="timer-icon" id="nextPhase" type="button" aria-label="Proxima fase" data-i18n-aria="nextPhase">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14M6 6l8 6-8 6Z"/></svg>
+        </button>
+      </div>
+      <button class="reset-button" id="resetTimer" type="button" data-i18n="resetSession">Reiniciar sess&atilde;o</button>
+    </div>
+    <p class="sr-only" id="announcement" aria-live="polite" aria-atomic="true"></p>
+  </section>
+
+  <div class="toast" id="toast" hidden role="status"></div>
+</body>
+</html>

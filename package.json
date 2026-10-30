@@ -1,0 +1,16 @@
+{
+  "name": "awaken-drills",
+  "version": "5.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check public/js/engine.mjs && node --check public/js/app.mjs && node --check public/sw.js",
+    "test": "node --test test/*.test.mjs",
+    "verify": "npm run check && npm test",
+    "dev": "npx wrangler@latest dev",
+    "deploy": "npx wrangler@latest deploy"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
