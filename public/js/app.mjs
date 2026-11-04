@@ -27,11 +27,11 @@ const I18N = {
     finalCountdownHelp:'Bipes em 3, 2 e 1 segundos', keepAwake:'Manter tela ativa', keepAwakeHelp:'Durante cronômetros em execução',
     restoreDefaults:'Restaurar padrões', drillsTitle:'Drills', roundsTitle:'Rounds', athletes:'Atletas', setsPerAthlete:'Séries por atleta',
     prepare:'Preparar', drillTime:'Tempo do drill', colorIsBackground:'Cor = fundo do cronômetro', startDrill:'Iniciar drill', rounds:'Rounds',
-    round:'Round', rest:'Descanso', startSparring:'Iniciar sparring', infiniteTitle:'Contagem infinita',
+    round:'Tempo de Luta', rest:'Descanso', startSparring:'Iniciar sparring', infiniteTitle:'Contagem infinita',
     infiniteHelp:'Cronômetro crescente sem limite de tempo.', startInfinite:'Iniciar contagem', athlete:'Atleta', name:'Nome', technique:'Técnica',
     techniqueOptional:'opcional', techniquePlaceholder:'Digite uma técnica', add:'Adicionar', noTechnique:'Nenhuma técnica', nextTechnique:'TÉCNICA',
     phasePrepare:'PREPARAR', phaseTechnique:'TÉCNICA', phaseDrill:'DRILL', phaseSparring:'SPARRING', phaseRest:'DESCANSO',
-    phaseInfinite:'CONTAGEM INFINITA', pause:'Pausar', continue:'Continuar', start:'Iniciar', done:'Concluído', resetSession:'Reiniciar sessão',
+    phaseInfinite:'CONTAGEM INFINITA', phaseEnd:'FIM', pause:'Pausar', continue:'Continuar', start:'Iniciar', done:'Concluído', resetSession:'Reiniciar sessão',
     sessionDone:'Sessão concluída.', drillTimeRequired:'Defina um tempo de drill maior que zero.',
     roundTimeRequired:'Defina um tempo de round maior que zero.', setProgress:'Série {current}/{total} · {athlete}',
     roundProgress:'Round {current}/{total}', nextRound:'Próximo: round {current}/{total}', duplicateTechnique:'Essa técnica já foi adicionada.'
@@ -46,7 +46,7 @@ const I18N = {
     infiniteHelp:'Count-up timer with no time limit.', startInfinite:'Start count', athlete:'Athlete', name:'Name', technique:'Technique',
     techniqueOptional:'optional', techniquePlaceholder:'Type a technique', add:'Add', noTechnique:'No technique', nextTechnique:'TECHNIQUE',
     phasePrepare:'GET READY', phaseTechnique:'TECHNIQUE', phaseDrill:'DRILL', phaseSparring:'SPARRING', phaseRest:'REST',
-    phaseInfinite:'INFINITE COUNT', pause:'Pause', continue:'Continue', start:'Start', done:'Done', resetSession:'Reset session',
+    phaseInfinite:'INFINITE COUNT', phaseEnd:'END', pause:'Pause', continue:'Continue', start:'Start', done:'Done', resetSession:'Reset session',
     sessionDone:'Session complete.', drillTimeRequired:'Set a drill time greater than zero.',
     roundTimeRequired:'Set a round time greater than zero.', setProgress:'Set {current}/{total} · {athlete}',
     roundProgress:'Round {current}/{total}', nextRound:'Next: round {current}/{total}', duplicateTechnique:'That technique has already been added.'
@@ -407,21 +407,22 @@ class TimerRunner {
     const finished = this.current();
     const next = this.plan[this.index + 1];
 
-    if (this.shouldRingAtTransition(finished, next)) audio.bell();
-
-    if (next) {
-      this.index += 1;
-      this.remainingMs = (this.current()?.duration || 0) * 1000;
-      this.lastBeepSecond = null;
+    if (!next) {
+      // Final de ciclo: o sinal de encerramento deve ocorrer sempre uma unica vez.
+      audio.bell();
+      this.controlState = 'done';
       this.render();
-      this.play();
+      $('announcement').textContent = t('sessionDone');
+      releaseWakeLock();
       return;
     }
 
-    this.controlState = 'done';
+    if (this.shouldRingAtTransition(finished, next)) audio.bell();
+    this.index += 1;
+    this.remainingMs = (this.current()?.duration || 0) * 1000;
+    this.lastBeepSecond = null;
     this.render();
-    $('announcement').textContent = t('sessionDone');
-    releaseWakeLock();
+    this.play();
   }
 
   go(delta) {
@@ -452,10 +453,15 @@ class TimerRunner {
 
     const total = Math.max(1, (phase.duration || 1) * 1000);
     const seconds = Math.ceil(this.remainingMs / 1000);
-    $('clock').textContent = this.mode === 'infinite' ? formatTime(this.elapsedMs / 1000) : formatTime(this.remainingMs / 1000);
-    $('phaseBarFill').style.width = this.mode === 'infinite'
-      ? '0%'
-      : `${Math.min(100, Math.max(0, (1 - this.remainingMs / total) * 100))}%`;
+    const isDone = this.controlState === 'done' && this.mode !== 'infinite';
+    $('clock').textContent = isDone
+      ? t('phaseEnd')
+      : this.mode === 'infinite' ? formatTime(this.elapsedMs / 1000) : formatTime(this.remainingMs / 1000);
+    $('phaseBarFill').style.width = isDone
+      ? '100%'
+      : this.mode === 'infinite'
+        ? '0%'
+        : `${Math.min(100, Math.max(0, (1 - this.remainingMs / total) * 100))}%`;
 
     if (
       this.running &&
@@ -476,7 +482,10 @@ class TimerRunner {
     let athlete = '';
     let technique = '';
 
-    if (phase.kind === 'infinite') {
+    if (isDone) {
+      background = '#FF453A';
+      label = t('phaseEnd');
+    } else if (phase.kind === 'infinite') {
       label = t('phaseInfinite');
     } else if (['prepare', 'techniqueCue', 'drill'].includes(phase.kind) && phase.athleteName) {
       background = phase.color || '#0A84FF';
@@ -503,9 +512,9 @@ class TimerRunner {
     $('phaseLabel').textContent = label;
     $('phaseProgress').textContent = progress;
     $('timerAthlete').textContent = athlete;
-    $('currentTechnique').textContent = phase.kind === 'drill' ? technique : '';
+    $('currentTechnique').textContent = !isDone && phase.kind === 'drill' ? technique : '';
 
-    const cueVisible = phase.kind === 'techniqueCue' && Boolean(technique);
+    const cueVisible = !isDone && phase.kind === 'techniqueCue' && Boolean(technique);
     $('techniqueCue').hidden = !cueVisible;
     $('techniqueAthlete').textContent = cueVisible ? athlete : '';
     $('techniqueText').textContent = cueVisible ? technique : '';
@@ -547,6 +556,7 @@ async function startPreparedTimer(plan, mode) {
   prepareTimer(plan, mode);
   // Regra principal: o cronômetro NÃO começa antes da tentativa de fullscreen terminar.
   await enterImmersive();
+  if (['drill', 'sparring'].includes(plan[0]?.kind)) audio.bell();
   runner.play();
 }
 
@@ -713,7 +723,10 @@ function bind() {
   $('backButton').onclick = leaveTimer;
   $('fullscreenButton').onclick = () => document.body.classList.contains('immersive') ? exitImmersive() : enterImmersive();
   $('timerCenter').onclick = () => {
-    if (document.body.classList.contains('immersive') && runner.current()?.kind !== 'techniqueCue') exitImmersive();
+    if (document.body.classList.contains('immersive')) runner.toggle();
+  };
+  $('techniqueCue').onclick = () => {
+    if (document.body.classList.contains('immersive')) runner.toggle();
   };
 
   document.addEventListener('fullscreenchange', () => {

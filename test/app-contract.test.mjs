@@ -33,6 +33,10 @@ test('user-supplied Awaken logo is the canonical local brand image', () => {
   assert.ok(!index.includes('raw.githubusercontent.com/victorlealz/awaken-bjj'));
 });
 
+test('service worker cache key is bumped so deployed clients receive the updated app', () => {
+  assert.match(sw, /awaken-drills-v5\.4\.3/);
+});
+
 test('service worker caches local logo assets and original sound sources when available', () => {
   assert.match(sw, /\/assets\/logo\.png/);
   assert.match(sw, /\/assets\/logo-awaken\.png/);
@@ -43,7 +47,45 @@ test('service worker caches local logo assets and original sound sources when av
   assert.match(sw, /dry-fart_3\.mp3/);
 });
 
-test('immersive timer click logic does not use the old operator-precedence bug', () => {
+test('immersive timer click logic does not use the old exit-on-center-click condition', () => {
   assert.ok(!app.includes("!runner.current()?.kind==='techniqueCue'"));
-  assert.ok(app.includes("runner.current()?.kind !== 'techniqueCue'"));
+  assert.ok(!app.includes("runner.current()?.kind !== 'techniqueCue'"));
+});
+
+test('zero prepare starts a direct drill or sparring phase with the selected bell after fullscreen', () => {
+  const block = app.match(/async function startPreparedTimer\([\s\S]*?\n\}/)?.[0] || '';
+  assert.ok(block.includes("['drill', 'sparring'].includes(plan[0]?.kind)"));
+  assert.ok(block.includes('audio.bell()'));
+  assert.ok(block.indexOf('await enterImmersive()') < block.indexOf('audio.bell()'));
+  assert.ok(block.indexOf('audio.bell()') < block.indexOf('runner.play()'));
+});
+
+test('session completion always rings once before rendering the done state', () => {
+  const block = app.match(/completePhase\(\) \{[\s\S]*?\n  \}/)?.[0] || '';
+  const finalBlock = block.match(/if \(!next\) \{[\s\S]*?\n    \}/)?.[0] || '';
+  assert.ok(finalBlock.includes('audio.bell()'));
+  assert.ok(finalBlock.includes("this.controlState = 'done'"));
+  assert.ok(finalBlock.indexOf('audio.bell()') < finalBlock.indexOf("this.controlState = 'done'"));
+});
+
+test('completed timer renders FIM or END on the existing timer screen with red background', () => {
+  assert.match(app, /phaseEnd:'FIM'/);
+  assert.match(app, /phaseEnd:'END'/);
+  assert.match(app, /background = '#FF453A'/);
+  assert.match(app, /\? t\('phaseEnd'\)/);
+});
+
+test('sparring keeps Rounds and uses Tempo de Luta for the round duration label in Portuguese', () => {
+  assert.match(index, /data-i18n="rounds">Rounds</);
+  assert.match(index, /data-i18n="round">Tempo de Luta</);
+  assert.match(app, /round:'Tempo de Luta'/);
+});
+
+test('immersive screen click toggles pause without exiting fullscreen', () => {
+  const centerBlock = app.match(/\$\('timerCenter'\)\.onclick = \(\) => \{[\s\S]*?\n  \};/)?.[0] || '';
+  const cueBlock = app.match(/\$\('techniqueCue'\)\.onclick = \(\) => \{[\s\S]*?\n  \};/)?.[0] || '';
+  assert.ok(centerBlock.includes('runner.toggle()'));
+  assert.ok(cueBlock.includes('runner.toggle()'));
+  assert.ok(!centerBlock.includes('exitImmersive()'));
+  assert.ok(!cueBlock.includes('exitImmersive()'));
 });
