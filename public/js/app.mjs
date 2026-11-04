@@ -80,6 +80,7 @@ const defaultState = () => ({
 
 let state = loadState();
 let wakeLock = null;
+let immersiveControlsTimer = 0;
 
 function t(key, vars = {}) {
   let value = (I18N[state.settings.language] || I18N['pt-BR'])[key] || key;
@@ -520,6 +521,14 @@ class TimerRunner {
     $('techniqueText').textContent = cueVisible ? technique : '';
     $('clock').hidden = cueVisible;
     $('playPause').textContent = t(this.controlState);
+
+    const immersiveToggle = $('immersivePlayPause');
+    if (immersiveToggle) {
+      immersiveToggle.hidden = isDone;
+      const immersiveAction = this.running || this.controlState === 'start' ? 'pause' : 'continue';
+      immersiveToggle.dataset.state = immersiveAction;
+      immersiveToggle.setAttribute('aria-label', t(immersiveAction));
+    }
   }
 }
 
@@ -546,10 +555,24 @@ async function enterImmersive() {
 }
 
 async function exitImmersive() {
+  hideImmersiveControls();
   document.body.classList.remove('immersive');
   try {
     if (document.fullscreenElement) await document.exitFullscreen();
   } catch {}
+}
+
+function hideImmersiveControls() {
+  clearTimeout(immersiveControlsTimer);
+  immersiveControlsTimer = 0;
+  document.body.classList.remove('immersive-controls-visible');
+}
+
+function showImmersiveControls() {
+  if (!document.body.classList.contains('immersive')) return;
+  document.body.classList.add('immersive-controls-visible');
+  clearTimeout(immersiveControlsTimer);
+  immersiveControlsTimer = setTimeout(hideImmersiveControls, 2000);
 }
 
 async function startPreparedTimer(plan, mode) {
@@ -722,15 +745,27 @@ function bind() {
   $('resetTimer').onclick = () => runner.reset();
   $('backButton').onclick = leaveTimer;
   $('fullscreenButton').onclick = () => document.body.classList.contains('immersive') ? exitImmersive() : enterImmersive();
-  $('timerCenter').onclick = () => {
-    if (document.body.classList.contains('immersive')) runner.toggle();
+  $('timerScreen').onclick = event => {
+    if (!document.body.classList.contains('immersive')) return;
+    if (event.target.closest('.immersive-action')) return;
+    showImmersiveControls();
   };
-  $('techniqueCue').onclick = () => {
-    if (document.body.classList.contains('immersive')) runner.toggle();
+  $('immersiveHome').onclick = event => {
+    event.stopPropagation();
+    leaveTimer();
+  };
+  $('immersivePlayPause').onclick = event => {
+    event.stopPropagation();
+    if (runner.controlState === 'done') return;
+    runner.toggle();
+    showImmersiveControls();
   };
 
   document.addEventListener('fullscreenchange', () => {
-    if (!document.fullscreenElement) document.body.classList.remove('immersive');
+    if (!document.fullscreenElement) {
+      hideImmersiveControls();
+      document.body.classList.remove('immersive');
+    }
   });
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible' && runner.running) requestWakeLock();

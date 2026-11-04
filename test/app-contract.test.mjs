@@ -34,7 +34,7 @@ test('user-supplied Awaken logo is the canonical local brand image', () => {
 });
 
 test('service worker cache key is bumped so deployed clients receive the updated app', () => {
-  assert.match(sw, /awaken-drills-v5\.4\.3/);
+  assert.match(sw, /awaken-drills-v5\.4\.4/);
 });
 
 test('service worker caches local logo assets and original sound sources when available', () => {
@@ -81,11 +81,34 @@ test('sparring keeps Rounds and uses Tempo de Luta for the round duration label 
   assert.match(app, /round:'Tempo de Luta'/);
 });
 
-test('immersive screen click toggles pause without exiting fullscreen', () => {
-  const centerBlock = app.match(/\$\('timerCenter'\)\.onclick = \(\) => \{[\s\S]*?\n  \};/)?.[0] || '';
-  const cueBlock = app.match(/\$\('techniqueCue'\)\.onclick = \(\) => \{[\s\S]*?\n  \};/)?.[0] || '';
-  assert.ok(centerBlock.includes('runner.toggle()'));
-  assert.ok(cueBlock.includes('runner.toggle()'));
-  assert.ok(!centerBlock.includes('exitImmersive()'));
-  assert.ok(!cueBlock.includes('exitImmersive()'));
+test('immersive screen tap only reveals controls and never pauses the timer', () => {
+  const screenBlock = app.match(/\$\('timerScreen'\)\.onclick = event => \{[\s\S]*?\n  \};/)?.[0] || '';
+  assert.ok(screenBlock.includes('showImmersiveControls()'));
+  assert.ok(!screenBlock.includes('runner.toggle()'));
+  assert.ok(!screenBlock.includes('exitImmersive()'));
+});
+
+test('immersive pause control is the only tap target that toggles the timer', () => {
+  const pauseBlock = app.match(/\$\('immersivePlayPause'\)\.onclick = event => \{[\s\S]*?\n  \};/)?.[0] || '';
+  assert.ok(pauseBlock.includes('event.stopPropagation()'));
+  assert.ok(pauseBlock.includes('runner.toggle()'));
+  assert.ok(pauseBlock.includes('showImmersiveControls()'));
+  assert.match(index, /id="immersivePlayPause"/);
+  assert.match(app, /immersiveToggle\.dataset\.state = immersiveAction/);
+  assert.match(app, /this\.running \|\| this\.controlState === 'start' \? 'pause' : 'continue'/);
+});
+
+test('immersive home X leaves the timer without sharing the pause action', () => {
+  const homeBlock = app.match(/\$\('immersiveHome'\)\.onclick = event => \{[\s\S]*?\n  \};/)?.[0] || '';
+  assert.ok(homeBlock.includes('event.stopPropagation()'));
+  assert.ok(homeBlock.includes('leaveTimer()'));
+  assert.ok(!homeBlock.includes('runner.toggle()'));
+  assert.match(index, /id="immersiveHome"/);
+});
+
+test('immersive controls auto-hide after two seconds without interaction', () => {
+  const showBlock = app.match(/function showImmersiveControls\(\) \{[\s\S]*?\n\}/)?.[0] || '';
+  assert.ok(showBlock.includes("classList.add('immersive-controls-visible')"));
+  assert.ok(showBlock.includes('clearTimeout(immersiveControlsTimer)'));
+  assert.match(showBlock, /setTimeout\(hideImmersiveControls, 2000\)/);
 });
