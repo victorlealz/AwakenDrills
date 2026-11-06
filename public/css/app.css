@@ -19,10 +19,10 @@
     position: absolute;
     left: 5px;
     top: 11px;
-    width: 15px;
-    height: 2px;
+    width: 14px;
+    height: 2.5px;
     background: currentColor;
-    border-radius: 2px;
+    border-radius: 999px;
 }
 
 .immersive-home-symbol::after {
@@ -32,8 +32,8 @@
     top: 7px;
     width: 8px;
     height: 8px;
-    border-left: 2px solid currentColor;
-    border-bottom: 2px solid currentColor;
+    border-left: 2.5px solid currentColor;
+    border-bottom: 2.5px solid currentColor;
     transform: rotate(45deg);
     border-radius: 1px;
 }
