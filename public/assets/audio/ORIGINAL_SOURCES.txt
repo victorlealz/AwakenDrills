@@ -12,4 +12,7 @@ https://www.myinstants.com/media/sounds/faaah.mp3
 Dry Fart
 https://www.myinstants.com/media/sounds/dry-fart_3.mp3
 
+Faz o L
+https://www.myinstants.com/media/sounds/faz-o-l-vinheta.mp3
+
 A v5.4 usa estas fontes canônicas diretamente e o Service Worker tenta armazená-las no cache do PWA na instalação.
