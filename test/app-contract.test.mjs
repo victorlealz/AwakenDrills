@@ -34,7 +34,7 @@ test('user-supplied Awaken logo is the canonical local brand image', () => {
 });
 
 test('service worker cache key is bumped so deployed clients receive the updated app', () => {
-  assert.match(sw, /awaken-drills-v5\.4\.4/);
+  assert.match(sw, /awaken-drills-v5\.4\.5/);
 });
 
 test('service worker caches local logo assets and original sound sources when available', () => {
@@ -98,7 +98,7 @@ test('immersive pause control is the only tap target that toggles the timer', ()
   assert.match(app, /this\.running \|\| this\.controlState === 'start' \? 'pause' : 'continue'/);
 });
 
-test('immersive home X leaves the timer without sharing the pause action', () => {
+test('immersive home control leaves the timer without sharing the pause action', () => {
   const homeBlock = app.match(/\$\('immersiveHome'\)\.onclick = event => \{[\s\S]*?\n  \};/)?.[0] || '';
   assert.ok(homeBlock.includes('event.stopPropagation()'));
   assert.ok(homeBlock.includes('leaveTimer()'));
@@ -111,4 +111,18 @@ test('immersive controls auto-hide after two seconds without interaction', () =>
   assert.ok(showBlock.includes("classList.add('immersive-controls-visible')"));
   assert.ok(showBlock.includes('clearTimeout(immersiveControlsTimer)'));
   assert.match(showBlock, /setTimeout\(hideImmersiveControls, 2000\)/);
+});
+
+
+test('sparring round selector contains every number from 1 through 10', () => {
+  const select = index.match(/<select id="sparringRounds">([\s\S]*?)<\/select>/)?.[1] || '';
+  const values = [...select.matchAll(/<option(?: selected)?>(\d+)<\/option>/g)].map(match => Number(match[1]));
+  assert.deepEqual(values, [1,2,3,4,5,6,7,8,9,10]);
+});
+
+test('fullscreen controls use CSS-drawn symbols instead of raw X/fullscreen glyphs', () => {
+  assert.match(index, /class="immersive-home-symbol"/);
+  assert.match(index, /class="fullscreen-symbol"/);
+  assert.ok(!index.includes('aria-label="Voltar para a tela inicial">×</button>'));
+  assert.ok(!index.includes('aria-label="Tela cheia">⛶</button>'));
 });

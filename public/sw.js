@@ -1,4 +1,4 @@
-const CACHE = 'awaken-drills-v5.4.4';
+const CACHE = 'awaken-drills-v5.4.5';
 const CORE = [
   '/',
   '/index.html',

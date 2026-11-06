@@ -26,7 +26,7 @@
     </a>
     <button class="icon-button" id="settingsToggle" type="button" aria-label="Configurações">⚙</button>
     <section class="settings-menu" id="settingsMenu" hidden>
-      <div class="settings-title-row"><div><h2 data-i18n="settings">Configurações</h2><span data-i18n="generalPreferences">Preferências gerais</span></div><span class="version-badge">v5.4.2</span></div>
+      <div class="settings-title-row"><div><h2 data-i18n="settings">Configurações</h2><span data-i18n="generalPreferences">Preferências gerais</span></div><span class="version-badge">v5.4.5</span></div>
       <div class="settings-row"><span><strong data-i18n="language">Idioma</strong><small>PT / EN</small></span><div class="language-toggle"><button id="langPT" data-lang="pt-BR">PT</button><button id="langEN" data-lang="en">EN</button></div></div>
       <label class="settings-row switch-row"><span><strong data-i18n="sound">Som</strong><small data-i18n="bellsAndAlerts">Sinos e alertas</small></span><input id="audioEnabled" type="checkbox" checked><i></i></label>
       <label class="settings-row"><span><strong data-i18n="bell">Sino</strong><small data-i18n="bellHelp">Som ao trocar ou finalizar</small></span><select id="bellType"><option value="boxing">Boxing Bell</option><option value="smash">I'm gonna smash your boy</option><option value="faaah">Faaah</option><option value="fart">Dry Fart</option><option value="ring">Ringue clássico</option><option value="double">Ringue duplo</option><option value="vintage">Ringue vintage</option></select></label>
@@ -56,7 +56,7 @@
     <section id="sparringSetup" class="mode-panel" hidden>
       <div class="hero-copy"><p class="eyebrow">SPARRING TIMER</p><h1 data-i18n="roundsTitle">Rounds</h1></div>
       <div class="card compact-grid">
-        <label class="field"><span data-i18n="rounds">Rounds</span><select id="sparringRounds"><option>1</option><option>2</option><option>3</option><option selected>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></label>
+        <label class="field"><span data-i18n="rounds">Rounds</span><select id="sparringRounds"><option>1</option><option>2</option><option>3</option><option>4</option><option selected>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></label>
         <label class="field"><span data-i18n="prepare">Preparar</span><select id="sparringPrep"><option value="0">0 s</option><option value="5">5 s</option><option value="10" selected>10 s</option><option value="15">15 s</option><option value="30">30 s</option></select></label>
         <div class="field"><span data-i18n="round">Tempo de Luta</span><div class="time-inputs"><input id="sparringMinutes" type="number" min="0" max="60" value="5"><b>:</b><input id="sparringSeconds" type="number" min="0" max="59" value="0"></div></div>
         <div class="field"><span data-i18n="rest">Descanso</span><div class="time-inputs"><input id="restMinutes" type="number" min="0" max="30" value="1"><b>:</b><input id="restSeconds" type="number" min="0" max="59" value="0"></div></div>
@@ -75,7 +75,7 @@
     <div class="timer-top timer-chrome">
       <button class="timer-icon" id="backButton" type="button" aria-label="Voltar">←</button>
       <div class="phase-meta"><span id="phaseLabel"></span><small id="phaseProgress"></small></div>
-      <button class="timer-icon" id="fullscreenButton" type="button" aria-label="Tela cheia">⛶</button>
+      <button class="timer-icon fullscreen-toggle" id="fullscreenButton" type="button" aria-label="Tela cheia"><span class="fullscreen-symbol" aria-hidden="true"></span></button>
     </div>
 
     <div class="timer-center" id="timerCenter">
@@ -84,7 +84,7 @@
       <div class="current-technique" id="currentTechnique"></div>
     </div>
 
-    <button class="immersive-action immersive-home" id="immersiveHome" type="button" aria-label="Voltar para a tela inicial">×</button>
+    <button class="immersive-action immersive-home" id="immersiveHome" type="button" aria-label="Voltar para a tela inicial"><span class="immersive-home-symbol" aria-hidden="true"></span></button>
     <button class="immersive-action immersive-play-pause" id="immersivePlayPause" type="button" data-state="pause" aria-label="Pausar">
       <span class="immersive-control-symbol" aria-hidden="true"></span>
     </button>
